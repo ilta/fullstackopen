@@ -4,6 +4,22 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
 
+const TopAnecdote = ({ points, anecdotes }) => {
+  /*
+  See: https://stackoverflow.com/questions/11301438/return-index-of-greatest-value-in-an-array
+  Simple solution, but may not scale well (or work) with really large arrays.
+  */
+  const max = points.indexOf(Math.max(...points));
+
+  return (
+    <div>
+      <h2>Anecdote with most votes</h2>
+      <div>{anecdotes[max]}</div>
+      <div>has {points[max]} votes</div>
+    </div>
+  );
+};
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -31,11 +47,13 @@ const App = () => {
 
   return (
     <>
+      <h2>Anecdote of the day</h2>
       <div>{anecdotes[selected]}</div>
       <div>
         <Button text="vote" handleClick={onVoteClick} />
         <Button text="next anecdote" handleClick={onNextClick} />
       </div>
+      <TopAnecdote points={points} anecdotes={anecdotes} />
     </>
   );
 };
