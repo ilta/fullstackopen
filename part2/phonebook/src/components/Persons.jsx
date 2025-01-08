@@ -7,7 +7,7 @@ const Persons = ({ persons, newFilter }) => {
         )
         .map((filteredRecord) => (
           <div key={filteredRecord.id}>
-            {filteredRecord.name} {filteredRecord.phone}
+            {filteredRecord.name} {filteredRecord.number}
           </div>
         ))}
     </div>
