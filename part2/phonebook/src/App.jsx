@@ -51,22 +51,38 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault();
+    const personToUpdate = persons.find((person) => person.name === newName);
 
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
-      return;
+    if (personToUpdate) {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const changedNumber = { ...personToUpdate, number: newNumber };
+        const id = personToUpdate.id;
+        personService.update(id, changedNumber).then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id !== id ? person : returnedPerson
+            )
+          );
+          setNewName('');
+          setNewNumber('');
+        });
+      }
+    } else {
+      const phoneObject = {
+        name: newName,
+        number: newNumber,
+      };
+
+      personService.create(phoneObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      });
     }
-
-    const phoneObject = {
-      name: newName,
-      number: newNumber,
-    };
-
-    personService.create(phoneObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName('');
-      setNewNumber('');
-    });
   };
 
   return (
