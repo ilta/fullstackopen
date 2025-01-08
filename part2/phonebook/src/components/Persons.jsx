@@ -1,4 +1,4 @@
-const Persons = ({ persons, newFilter }) => {
+const Persons = ({ persons, newFilter, handleDeleteRecord }) => {
   return (
     <div>
       {persons
@@ -7,7 +7,10 @@ const Persons = ({ persons, newFilter }) => {
         )
         .map((filteredRecord) => (
           <div key={filteredRecord.id}>
-            {filteredRecord.name} {filteredRecord.number}
+            {filteredRecord.name} {filteredRecord.number}{' '}
+            <button onClick={() => handleDeleteRecord(filteredRecord.id)}>
+              delete
+            </button>
           </div>
         ))}
     </div>

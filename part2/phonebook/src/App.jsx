@@ -28,6 +28,27 @@ const App = () => {
     setNewFilter(event.target.value);
   };
 
+  const handleDeleteRecord = (id) => {
+    const personName = persons.find((person) => person.id === id).name;
+    if (window.confirm(`Delete ${personName}?`)) {
+      const note = persons.find((n) => n.id === id);
+
+      personService
+        .deleteRecord(id)
+        .then(() => {
+          console.log(`Deleted person ${id}`);
+        })
+        .catch((error) => {
+          console.log(
+            `The record '${personName}' was already deleted from server`
+          );
+        });
+
+      // Delete the person on the client
+      setPersons(persons.filter((p) => p.id !== id));
+    }
+  };
+
   const addName = (event) => {
     event.preventDefault();
 
@@ -61,7 +82,11 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} newFilter={newFilter} />
+      <Persons
+        persons={persons}
+        newFilter={newFilter}
+        handleDeleteRecord={handleDeleteRecord}
+      />
     </div>
   );
 };
