@@ -49,29 +49,35 @@ const App = () => {
     }
   };
 
-  const addName = (event) => {
+  // Helper function for updating existing number
+  const updateExistingNumber = (personToUpdate) => {
+    const changedNumber = { ...personToUpdate, number: newNumber };
+    const id = personToUpdate.id;
+    personService.update(id, changedNumber).then((returnedPerson) => {
+      setPersons(
+        persons.map((person) => (person.id !== id ? person : returnedPerson))
+      );
+      setNewName('');
+      setNewNumber('');
+    });
+  };
+
+  // Add or update records, called in PersonForm
+  const addRecord = (event) => {
     event.preventDefault();
     const personToUpdate = persons.find((person) => person.name === newName);
 
     if (personToUpdate) {
+      // Updating existing number
       if (
         window.confirm(
           `${newName} is already added to phonebook, replace the old number with a new one?`
         )
       ) {
-        const changedNumber = { ...personToUpdate, number: newNumber };
-        const id = personToUpdate.id;
-        personService.update(id, changedNumber).then((returnedPerson) => {
-          setPersons(
-            persons.map((person) =>
-              person.id !== id ? person : returnedPerson
-            )
-          );
-          setNewName('');
-          setNewNumber('');
-        });
+        updateExistingNumber(personToUpdate);
       }
     } else {
+      // Normal addition
       const phoneObject = {
         name: newName,
         number: newNumber,
@@ -91,7 +97,7 @@ const App = () => {
       <Filter value={newFilter} onChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm
-        addName={addName}
+        addName={addRecord}
         newName={newName}
         newNumber={newNumber}
         handleNameChange={handleNameChange}
