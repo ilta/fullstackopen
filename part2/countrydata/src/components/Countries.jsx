@@ -48,7 +48,7 @@ const Countries = ({
     return <div>Too many matches, specify another filter</div>;
   else {
     return filteredCountries.map((filteredCountry) => (
-      <div key={filteredCountry.name.common}>
+      <div key={filteredCountry.cca2}>
         {filteredCountry.name.common}
         <button onClick={() => handleClickCountry(filteredCountry.name.common)}>
           show
