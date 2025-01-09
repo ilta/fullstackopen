@@ -11,4 +11,8 @@ part1/
   anecdotes/
   courseinfo/
   unicafe/
+part2/
+  countrydata/
+  courseinfo/
+  phonebook/
 ```
