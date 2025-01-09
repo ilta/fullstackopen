@@ -10,6 +10,10 @@ function App() {
     setFilter(event.target.value);
   };
 
+  const handleClickCountry = (countryName) => {
+    setFilter(countryName);
+  };
+
   useEffect(() => {
     axios
       .get('https://studies.cs.helsinki.fi/restcountries/api/all')
@@ -21,7 +25,11 @@ function App() {
   return (
     <>
       find countries <input value={filter} onChange={handleCountryChange} />
-      <Countries countries={countries} filter={filter} />
+      <Countries
+        countries={countries}
+        filter={filter}
+        handleClickCountry={handleClickCountry}
+      />
     </>
   );
 }

@@ -12,7 +12,7 @@ const CountryLine = ({ country }) => {
   );
 };
 
-const Countries = ({ filter, countries }) => {
+const Countries = ({ filter, countries, handleClickCountry }) => {
   if (!countries) return null;
 
   const filteredCountries = countries.filter((c) =>
@@ -27,7 +27,12 @@ const Countries = ({ filter, countries }) => {
     return <div>Too many matches, specify another filter</div>;
   else {
     return filteredCountries.map((filteredCountry) => (
-      <div key={filteredCountry.name.common}>{filteredCountry.name.common}</div>
+      <div key={filteredCountry.name.common}>
+        {filteredCountry.name.common}
+        <button onClick={() => handleClickCountry(filteredCountry.name.common)}>
+          show
+        </button>
+      </div>
     ));
   }
 };
