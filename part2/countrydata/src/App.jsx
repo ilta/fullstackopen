@@ -5,6 +5,7 @@ import Countries from './components/Countries';
 function App() {
   const [filter, setFilter] = useState('');
   const [countries, setCountries] = useState(null);
+  const [weatherData, setWeatherData] = useState(null);
 
   const handleCountryChange = (event) => {
     setFilter(event.target.value);
@@ -29,6 +30,8 @@ function App() {
         countries={countries}
         filter={filter}
         handleClickCountry={handleClickCountry}
+        weatherData={weatherData}
+        setWeatherData={setWeatherData}
       />
     </>
   );
