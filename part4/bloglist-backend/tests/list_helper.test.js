@@ -101,3 +101,33 @@ describe('most blogs', () => {
     assert.deepStrictEqual(result, expectedResult)
   })
 })
+
+describe('findMaxByKey', () => {
+  test('returns an empty object if when there are no blogs', () => {
+    const result = listHelper.findMaxByKey([], '')
+    assert.deepStrictEqual(result, {})
+  })
+
+  test('returns the object with the highest value in the example case', () => {
+    const testArray = [
+      {
+        name: 'Bob',
+        salary: 5000,
+      },
+      {
+        name: 'Paula',
+        salary: 6500,
+      },
+      {
+        name: 'Jack',
+        salary: 4500,
+      },
+    ]
+    const expectedResult = {
+      name: 'Paula',
+      salary: 6500,
+    }
+    const result = listHelper.findMaxByKey(testArray, 'salary')
+    assert.deepStrictEqual(result, expectedResult)
+  })
+})

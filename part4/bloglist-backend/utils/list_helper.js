@@ -49,6 +49,7 @@ const mostBlogs = (blogs) => {
 module.exports = {
   dummy,
   totalLikes,
+  findMaxByKey,
   favoriteBlog,
   mostBlogs,
 }
