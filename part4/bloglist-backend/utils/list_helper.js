@@ -4,12 +4,13 @@ const dummy = (blogs) => {
   return 1
 }
 
-const totalLikes = (blogs) => {
-  const reducer = (sum, item) => {
-    return sum + item.likes
-  }
+// Internal helper reducer for counting likes
+const likeAccumulator = (sum, item) => {
+  return sum + item.likes
+}
 
-  return blogs.reduce(reducer, 0)
+const totalLikes = (blogs) => {
+  return blogs.reduce(likeAccumulator, 0)
 }
 
 // Find the maximum item from the array using the selected key
@@ -47,10 +48,6 @@ const mostBlogs = (blogs) => {
 }
 
 const mostLikes = (blogs) => {
-  const reducer = (sum, item) => {
-    return sum + item.likes
-  }
-
   // Group by blogs by authors
   const groupedAuthors = lodash
     .chain(blogs)
@@ -58,7 +55,7 @@ const mostLikes = (blogs) => {
     .map((likes, author) => {
       return {
         author,
-        likes: likes.reduce(reducer, 0),
+        likes: likes.reduce(likeAccumulator, 0),
       }
     })
     .value()
