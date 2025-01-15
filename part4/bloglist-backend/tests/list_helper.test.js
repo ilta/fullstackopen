@@ -1,6 +1,7 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
+const { result } = require('lodash')
 
 const blogs = [
   {
@@ -86,6 +87,17 @@ describe('favorite blog', () => {
       likes: 12,
     }
     const result = listHelper.favoriteBlog(blogs)
+    assert.deepStrictEqual(result, expectedResult)
+  })
+})
+
+describe('most blogs', () => {
+  test('author with most blog post is returned in JSON format', () => {
+    const expectedResult = {
+      author: 'Robert C. Martin',
+      blogs: 3,
+    }
+    const result = listHelper.mostBlogs(blogs)
     assert.deepStrictEqual(result, expectedResult)
   })
 })
