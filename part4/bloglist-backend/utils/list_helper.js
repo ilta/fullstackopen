@@ -11,12 +11,10 @@ const totalLikes = (blogs) => {
 }
 
 const favoriteBlog = (blogs) => {
-  if (blogs.length === 0) return {}
-
   // See e.g. https://seanconnolly.dev/javascript-find-element-with-max-value
   const favorite = blogs.reduce((prev, current) => {
     return prev.likes > current.likes ? prev : current
-  })
+  }, {})
 
   return {
     title: favorite.title,
