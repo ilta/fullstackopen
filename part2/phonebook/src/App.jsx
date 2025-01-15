@@ -70,18 +70,27 @@ const App = () => {
   const updateExistingNumber = (personToUpdate) => {
     const changedNumber = { ...personToUpdate, number: newNumber };
     const id = personToUpdate.id;
-    personService.update(id, changedNumber).then((returnedPerson) => {
-      setPersons(
-        persons.map((person) => (person.id !== id ? person : returnedPerson))
-      );
-      setNewName('');
-      setNewNumber('');
-      setNotification({
-        type: 'info',
-        message: `Updated '${personToUpdate.name}'`,
+    personService
+      .update(id, changedNumber)
+      .then((returnedPerson) => {
+        setPersons(
+          persons.map((person) => (person.id !== id ? person : returnedPerson))
+        );
+        setNewName('');
+        setNewNumber('');
+        setNotification({
+          type: 'info',
+          message: `Updated '${personToUpdate.name}'`,
+        });
+        setTimeout(() => setNotification({ type: null, message: null }), 5000);
+      })
+      .catch((error) => {
+        setNotification({
+          type: 'error',
+          message: error.response.data.error,
+        });
+        setTimeout(() => setNotification({ type: null, message: null }), 5000);
       });
-      setTimeout(() => setNotification({ type: null, message: null }), 5000);
-    });
   };
 
   // Add or update records, called in PersonForm
@@ -105,13 +114,28 @@ const App = () => {
         number: newNumber,
       };
 
-      personService.create(phoneObject).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setNewName('');
-        setNewNumber('');
-        setNotification({ type: 'info', message: `Added ${newName}` });
-        setTimeout(() => setNotification({ type: null, message: null }), 5000);
-      });
+      personService
+        .create(phoneObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');
+          setNotification({ type: 'info', message: `Added ${newName}` });
+          setTimeout(
+            () => setNotification({ type: null, message: null }),
+            5000
+          );
+        })
+        .catch((error) => {
+          setNotification({
+            type: 'error',
+            message: error.response.data.error,
+          });
+          setTimeout(
+            () => setNotification({ type: null, message: null }),
+            5000
+          );
+        });
     }
   };
 

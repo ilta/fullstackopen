@@ -14,5 +14,5 @@ part1/
 part2/
   countrydata/
   courseinfo/
-  phonebook/
+  phonebook/ (also includes modifications made in part3)
 ```
