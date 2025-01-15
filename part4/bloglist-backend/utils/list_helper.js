@@ -31,19 +31,39 @@ const favoriteBlog = (blogs) => {
 
 const mostBlogs = (blogs) => {
   // Count blogs by authors
-  const groupedAuthors = lodash
+  const countedAuthors = lodash
     .chain(blogs)
     .countBy('author')
-    .map((numPosts, name) => {
+    .map((numPosts, author) => {
       return {
-        author: name,
+        author,
         blogs: numPosts,
       }
     })
     .value()
 
   // Find the author with most blog posts
-  return findMaxByKey(groupedAuthors, 'blogs')
+  return findMaxByKey(countedAuthors, 'blogs')
+}
+
+const mostLikes = (blogs) => {
+  const reducer = (sum, item) => {
+    return sum + item.likes
+  }
+
+  // Group by blogs by authors
+  const groupedAuthors = lodash
+    .chain(blogs)
+    .groupBy('author')
+    .map((likes, author) => {
+      return {
+        author,
+        likes: likes.reduce(reducer, 0),
+      }
+    })
+    .value()
+
+  return findMaxByKey(groupedAuthors, 'likes')
 }
 
 module.exports = {
@@ -52,4 +72,5 @@ module.exports = {
   findMaxByKey,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }

@@ -102,6 +102,17 @@ describe('list_helper', () => {
     })
   })
 
+  describe('most likes', () => {
+    test('author with most likes is found', () => {
+      const expectedResult = {
+        author: 'Edsger W. Dijkstra',
+        likes: 17,
+      }
+      const result = listHelper.mostLikes(blogs)
+      assert.deepStrictEqual(result, expectedResult)
+    })
+  })
+
   describe('findMaxByKey', () => {
     test('returns an empty object if when there are no blogs', () => {
       const result = listHelper.findMaxByKey([], '')
