@@ -14,5 +14,9 @@ part1/
 part2/
   countrydata/
   courseinfo/
-  phonebook/ (also includes modifications made in part3)
+  phonebook/   (also includes some modifications made in part3)
+part3/
+  README.md    dummy file that points to the another Github repository
+part4/
+  bloglist-backend/
 ```

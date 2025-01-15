@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "React is easy",
+  "author": "Naomi Poppler",
+  "url": "https://example.org/78",
+  "likes": 7
+}
