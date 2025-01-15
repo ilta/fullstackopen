@@ -12,11 +12,15 @@ const totalLikes = (blogs) => {
   return blogs.reduce(reducer, 0)
 }
 
-const favoriteBlog = (blogs) => {
-  // See e.g. https://seanconnolly.dev/javascript-find-element-with-max-value
-  const favorite = blogs.reduce((prev, current) => {
-    return prev.likes > current.likes ? prev : current
+// Find the maximum item from the array using the selected key
+const findMaxByKey = (array, key) => {
+  return array.reduce((prev, current) => {
+    return prev[key] > current[key] ? prev : current
   }, {})
+}
+
+const favoriteBlog = (blogs) => {
+  const favorite = findMaxByKey(blogs, 'likes')
 
   return {
     title: favorite.title,
@@ -39,9 +43,7 @@ const mostBlogs = (blogs) => {
     .value()
 
   // Find the author with most blog posts
-  return groupedAuthors.reduce((prev, current) => {
-    return prev.blogs > current.blogs ? prev : current
-  })
+  return findMaxByKey(groupedAuthors, 'blogs')
 }
 
 module.exports = {
