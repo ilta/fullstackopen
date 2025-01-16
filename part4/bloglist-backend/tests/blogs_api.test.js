@@ -27,8 +27,12 @@ describe('blogs_api', () => {
 
   test('there are three blog posts', async () => {
     const response = await api.get('/api/blogs')
-
     assert.strictEqual(response.body.length, 3)
+  })
+
+  test('field id exists', async () => {
+    const response = await api.get('/api/blogs')
+    assert.ok(typeof response.body[0].id === 'string')
   })
 
   after(async () => {
