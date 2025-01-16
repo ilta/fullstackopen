@@ -26,13 +26,36 @@ describe('blogs_api', () => {
   })
 
   test('there are three blog posts', async () => {
-    const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, 3)
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
   })
 
   test('field id exists', async () => {
-    const response = await api.get('/api/blogs')
-    assert.ok(typeof response.body[0].id === 'string')
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.ok(typeof blogsAtEnd[0].id === 'string')
+  })
+
+  describe('when a new blog post is saved', () => {
+    // Add one blog post (total is four)
+    beforeEach(async () => {
+      const blog = {
+        title: 'First class tests',
+        author: 'Robert C. Martin',
+        url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
+      }
+      await api.post('/api/blogs').send(blog)
+    })
+
+    test('the number of blog posts is increased', async () => {
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+    })
+
+    test('the contents are valid', async () => {
+      const blogsAtEnd = await helper.blogsInDb()
+      const contents = blogsAtEnd.map((blog) => blog.title)
+      assert(contents.includes('First class tests'))
+    })
   })
 
   after(async () => {
