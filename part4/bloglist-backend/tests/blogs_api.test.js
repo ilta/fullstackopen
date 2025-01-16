@@ -37,6 +37,7 @@ describe('blogs_api', () => {
 
   describe('when a new blog post is saved', () => {
     // Add one blog post (total is four)
+    // Note: the likes property is intentionally omitted
     beforeEach(async () => {
       const blog = {
         title: 'First class tests',
@@ -55,6 +56,11 @@ describe('blogs_api', () => {
       const blogsAtEnd = await helper.blogsInDb()
       const contents = blogsAtEnd.map((blog) => blog.title)
       assert(contents.includes('First class tests'))
+    })
+
+    test('likes defaults to 0 if a post is missing the property', async () => {
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd[blogsAtEnd.length - 1].likes, 0)
     })
   })
 
