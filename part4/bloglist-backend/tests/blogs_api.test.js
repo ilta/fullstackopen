@@ -87,6 +87,19 @@ describe('blogs_api', () => {
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
+    test('when url validation is failed because the url is too short', async () => {
+      const { body } = await api
+        .post('/api/blogs')
+        // Url is too short
+        .send({ author: 'Rob', title: 'First class tests', url: 'http://e' })
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+      assert.match(body.error, /Blog validation failed: url/)
+
+      // Check that no new blog posts were actually added
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    })
   })
 
   after(async () => {
