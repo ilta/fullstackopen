@@ -35,6 +35,10 @@ describe('blogs_api', () => {
     assert.ok(typeof blogsAtEnd[0].id === 'string')
   })
 
+  test('fetching an invalid URL fails with status 404', async () => {
+    await api.get('/api/blog').expect(404)
+  })
+
   describe('when a new blog post is saved', () => {
     // Add one blog post (total is four)
     // Note: the likes property is intentionally omitted
@@ -71,6 +75,10 @@ describe('blogs_api', () => {
         .send({ author: 'Rob', url: 'http://example.com/1' })
         .expect(400, { error: 'title is missing' })
         .expect('Content-Type', /application\/json/)
+
+      // Check that no new blog posts were actually added
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
     test('with status 400 when the url property is missing', async () => {
       await api
@@ -78,6 +86,10 @@ describe('blogs_api', () => {
         .send({ author: 'Rob', title: 'First class tests' })
         .expect(400, { error: 'url is missing' })
         .expect('Content-Type', /application\/json/)
+
+      // Check that no new blog posts were actually added
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
     test('with status 400 when url validation failed because the url is too short', async () => {
       const { body } = await api
@@ -87,10 +99,25 @@ describe('blogs_api', () => {
         .expect(400)
         .expect('Content-Type', /application\/json/)
       assert.match(body.error, /Blog validation failed: url/)
+
+      // Check that no new blog posts were actually added
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    })
+  })
+
+  describe('deletion of a blog post', () => {
+    test('succeeds with status 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToDelete = blogsAtStart[0]
+
+      await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
     })
 
-    after(async () => {
-      // Check that no new blog posts were actually added
+    test('fails with status 400 if id is not valid', async () => {
+      await api.delete('/api/blogs/5').expect(400, { error: 'malformatted id' })
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
