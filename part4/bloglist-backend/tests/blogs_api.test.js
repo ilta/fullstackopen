@@ -64,6 +64,31 @@ describe('blogs_api', () => {
     })
   })
 
+  describe('saving a new post is rejected', () => {
+    test('when the title property is missing', async () => {
+      await api
+        .post('/api/blogs')
+        .send({ author: 'Rob', url: 'http://example.com/1' })
+        .expect(400, { error: 'title is missing' })
+        .expect('Content-Type', /application\/json/)
+
+      // Check that no new blog posts were actually added
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    })
+    test('when the url property is missing', async () => {
+      await api
+        .post('/api/blogs')
+        .send({ author: 'Rob', title: 'First class tests' })
+        .expect(400, { error: 'url is missing' })
+        .expect('Content-Type', /application\/json/)
+
+      // Check that no new blog posts were actually added
+      const blogsAtEnd = await helper.blogsInDb()
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    })
+  })
+
   after(async () => {
     await mongoose.connection.close()
   })
