@@ -17,7 +17,7 @@ beforeEach(async () => {
   }
 })
 
-describe('blogs_api', () => {
+describe('when the database has some initial blog posts', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -39,7 +39,7 @@ describe('blogs_api', () => {
     await api.get('/api/blog').expect(404)
   })
 
-  describe('when a new blog post is saved', () => {
+  describe('and a new blog post is saved', () => {
     // Add one blog post (total is four)
     // Note: the likes property is intentionally omitted
     beforeEach(async () => {
@@ -106,7 +106,7 @@ describe('blogs_api', () => {
     })
   })
 
-  describe('deletion of a blog post', () => {
+  describe('the deletion of a blog post', () => {
     test('succeeds with status 204 if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
@@ -120,6 +120,78 @@ describe('blogs_api', () => {
       await api.delete('/api/blogs/5').expect(400, { error: 'malformatted id' })
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    })
+  })
+
+  describe('updating the like property of a post', () => {
+    test('with valid data succeeds with status 200', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+      const blog = {
+        id: '5a422a851b54a676234d17f7',
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/',
+        likes: 8,
+      }
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blog)
+        // Checking the status code and that the response matches sent data
+        .expect(200, blog)
+    })
+
+    test('without likes succeeds with status 200 and likes is set to 0', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+      const blog = {
+        id: '5a422a851b54a676234d17f7',
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/',
+      }
+      const expectedBlog = { ...blog, likes: 0 }
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blog)
+        // Checking the status code and that the response matches sent data
+        .expect(200, expectedBlog)
+    })
+
+    test('without a title succeeds with status 200', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+      const blog = {
+        id: '5a422a851b54a676234d17f7',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/',
+        likes: 8,
+      }
+      const expectedBlog = { ...blog, title: blogToUpdate.title }
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blog)
+        // Checking the status code and that the response matches sent data
+        .expect(200, expectedBlog)
+    })
+
+    test('with invalid url fails with status 400', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+      const blog = {
+        id: '5a422a851b54a676234d17f7',
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'http://', // too short
+        likes: 8,
+      }
+      const { body } = await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blog)
+        // Checking the status code and that the response matches sent data
+        .expect(400)
+
+      assert.match(body.error, /Validation failed: url/)
     })
   })
 
