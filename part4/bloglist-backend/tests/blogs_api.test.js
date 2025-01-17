@@ -65,29 +65,21 @@ describe('blogs_api', () => {
   })
 
   describe('saving a new post is rejected', () => {
-    test('when the title property is missing', async () => {
+    test('with status 400 when the title property is missing', async () => {
       await api
         .post('/api/blogs')
         .send({ author: 'Rob', url: 'http://example.com/1' })
         .expect(400, { error: 'title is missing' })
         .expect('Content-Type', /application\/json/)
-
-      // Check that no new blog posts were actually added
-      const blogsAtEnd = await helper.blogsInDb()
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
-    test('when the url property is missing', async () => {
+    test('with status 400 when the url property is missing', async () => {
       await api
         .post('/api/blogs')
         .send({ author: 'Rob', title: 'First class tests' })
         .expect(400, { error: 'url is missing' })
         .expect('Content-Type', /application\/json/)
-
-      // Check that no new blog posts were actually added
-      const blogsAtEnd = await helper.blogsInDb()
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
-    test('when url validation is failed because the url is too short', async () => {
+    test('with status 400 when url validation failed because the url is too short', async () => {
       const { body } = await api
         .post('/api/blogs')
         // Url is too short
@@ -95,7 +87,9 @@ describe('blogs_api', () => {
         .expect(400)
         .expect('Content-Type', /application\/json/)
       assert.match(body.error, /Blog validation failed: url/)
+    })
 
+    after(async () => {
       // Check that no new blog posts were actually added
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
