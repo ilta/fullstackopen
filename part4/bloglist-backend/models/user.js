@@ -5,9 +5,11 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    minLength: 3,
   },
   name: String,
-  passwordHash: String,
+  // Note: password length is validated in controller
+  passwordHash: { type: String, required: true },
 })
 
 userSchema.set('toJSON', {

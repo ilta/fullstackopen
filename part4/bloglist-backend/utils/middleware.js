@@ -18,6 +18,13 @@ const errorHandler = (error, request, response, next) => {
     return response
       .status(400)
       .json({ error: 'expected `username` to be unique' })
+  } else if (
+    error.name === 'SyntaxError' &&
+    error.message.includes('Expected double-quoted property name in JSON')
+  ) {
+    return response
+      .status(400)
+      .json({ error: 'malformatted JSON data in request' })
   }
 
   next(error)
