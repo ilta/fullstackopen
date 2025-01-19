@@ -10,6 +10,12 @@ const userSchema = mongoose.Schema({
   name: String,
   // Note: password length is validated in controller
   passwordHash: { type: String, required: true },
+  blogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog',
+    },
+  ],
 })
 
 userSchema.set('toJSON', {
