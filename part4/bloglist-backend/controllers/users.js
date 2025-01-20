@@ -16,21 +16,17 @@ usersRouter.post('/', async (request, response, next) => {
       .json({ error: 'password is too short: must have at least 3 characters' })
   }
   const saltRounds = 10
-  try {
-    const passwordHash = await bcrypt.hash(password, saltRounds)
+  const passwordHash = await bcrypt.hash(password, saltRounds)
 
-    const user = new User({
-      username,
-      name,
-      passwordHash,
-    })
+  const user = new User({
+    username,
+    name,
+    passwordHash,
+  })
 
-    const savedUser = await user.save()
+  const savedUser = await user.save()
 
-    response.status(201).json(savedUser)
-  } catch (error) {
-    next(error)
-  }
+  response.status(201).json(savedUser)
 })
 
 usersRouter.get('/', async (_request, response, next) => {
