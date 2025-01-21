@@ -69,6 +69,7 @@ const App = () => {
           user={user}
           handleLogout={handleLogout}
           setBlogs={setBlogs}
+          setErrorMessage={setErrorMessage}
         />
       ) : (
         <LoginForm

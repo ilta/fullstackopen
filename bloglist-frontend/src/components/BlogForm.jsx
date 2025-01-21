@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Blog from './Blog'
 import blogService from '../services/blogs'
 
-const BlogForm = ({ blogs, user, handleLogout, setBlogs }) => {
+const BlogForm = ({ blogs, user, handleLogout, setBlogs, setErrorMessage }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -18,10 +18,13 @@ const BlogForm = ({ blogs, user, handleLogout, setBlogs }) => {
         setTitle('')
         setAuthor('')
         setUrl('')
-        console.log(result)
+        setErrorMessage(`a new blog ${result.title} by ${result.author} added`)
       })
       .catch((error) => {
-        console.error(error)
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
   }
 
@@ -35,7 +38,7 @@ const BlogForm = ({ blogs, user, handleLogout, setBlogs }) => {
       <h2>create new</h2>
       <form onSubmit={handleSubmitBlog}>
         <div>
-          author
+          title
           <input
             type="text"
             value={title}
@@ -44,7 +47,7 @@ const BlogForm = ({ blogs, user, handleLogout, setBlogs }) => {
           />
         </div>
         <div>
-          title
+          author
           <input
             type="text"
             value={author}
