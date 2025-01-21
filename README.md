@@ -19,4 +19,6 @@ part3/
   README.md    dummy file that points to the another Github repository
 part4/
   bloglist-backend/
+part5/
+  bloglist-frontend/
 ```
