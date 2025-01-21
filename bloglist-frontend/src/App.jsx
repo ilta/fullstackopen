@@ -20,6 +20,9 @@ const App = () => {
         username,
         password,
       })
+
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -31,15 +34,34 @@ const App = () => {
     }
   }
 
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogAppUser')
+    blogService.setToken(null)
+    const userName = user.name
+    setUser(null)
+    setUsername('')
+    setPassword('')
+    setErrorMessage(`logged out ${userName}`)
+  }
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
+  }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
   }, [])
 
   return (
     <div>
       <Notification message={errorMessage} />
       {user ? (
-        <BlogForm blogs={blogs} user={user} />
+        <BlogForm blogs={blogs} user={user} handleLogout={handleLogout} />
       ) : (
         <LoginForm
           handleLogin={handleLogin}
