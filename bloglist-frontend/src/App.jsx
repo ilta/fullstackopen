@@ -42,6 +42,9 @@ const App = () => {
     setUsername('')
     setPassword('')
     setErrorMessage(`logged out ${userName}`)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
   }
 
   useEffect(() => {
@@ -61,7 +64,12 @@ const App = () => {
     <div>
       <Notification message={errorMessage} />
       {user ? (
-        <BlogForm blogs={blogs} user={user} handleLogout={handleLogout} />
+        <BlogForm
+          blogs={blogs}
+          user={user}
+          handleLogout={handleLogout}
+          setBlogs={setBlogs}
+        />
       ) : (
         <LoginForm
           handleLogin={handleLogin}
