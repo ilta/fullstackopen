@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Blog from './components/Blog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,6 +13,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const blogFormRef = useRef()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -60,18 +63,10 @@ const App = () => {
     }
   }, [])
 
-  return (
-    <div>
-      <Notification message={errorMessage} />
-      {user ? (
-        <BlogForm
-          blogs={blogs}
-          user={user}
-          handleLogout={handleLogout}
-          setBlogs={setBlogs}
-          setErrorMessage={setErrorMessage}
-        />
-      ) : (
+  if (user === null) {
+    return (
+      <div>
+        <Notification message={errorMessage} />
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -79,7 +74,31 @@ const App = () => {
           password={password}
           setPassword={setPassword}
         />
-      )}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <Notification message={errorMessage} />
+      <h2>blogs</h2>
+      <p>
+        {user.name} is logged in
+        <button onClick={handleLogout}>logout</button>
+      </p>
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm
+          blogs={blogs}
+          user={user}
+          handleLogout={handleLogout}
+          setBlogs={setBlogs}
+          setErrorMessage={setErrorMessage}
+          blogFormRef={blogFormRef}
+        />
+      </Togglable>
+      {blogs.map((blog) => (
+        <Blog key={blog.id} blog={blog} />
+      ))}
     </div>
   )
 }

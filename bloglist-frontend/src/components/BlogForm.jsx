@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import Blog from './Blog'
 import blogService from '../services/blogs'
 
-const BlogForm = ({ blogs, user, handleLogout, setBlogs, setErrorMessage }) => {
+const BlogForm = ({ blogs, setBlogs, setErrorMessage, blogFormRef }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -11,6 +10,7 @@ const BlogForm = ({ blogs, user, handleLogout, setBlogs, setErrorMessage }) => {
     event.preventDefault()
     const newBlog = { title, author, url }
 
+    blogFormRef.current.toggleVisibility()
     blogService
       .create(newBlog)
       .then((result) => {
@@ -19,6 +19,9 @@ const BlogForm = ({ blogs, user, handleLogout, setBlogs, setErrorMessage }) => {
         setAuthor('')
         setUrl('')
         setErrorMessage(`a new blog ${result.title} by ${result.author} added`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
       .catch((error) => {
         setErrorMessage(error.response.data.error)
@@ -30,11 +33,6 @@ const BlogForm = ({ blogs, user, handleLogout, setBlogs, setErrorMessage }) => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <p>
-        {user.name} is logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
       <h2>create new</h2>
       <form onSubmit={handleSubmitBlog}>
         <div>
@@ -66,9 +64,6 @@ const BlogForm = ({ blogs, user, handleLogout, setBlogs, setErrorMessage }) => {
         </div>
         <button type="submit">create</button>
       </form>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
     </div>
   )
 }
