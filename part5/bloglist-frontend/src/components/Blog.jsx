@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const blogStyle = {
   paddingTop: 10,
@@ -11,6 +12,13 @@ const blogStyle = {
 
 const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   const [expandedView, setExpandedView] = useState(false)
+
+  Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    updateLikes: PropTypes.func.isRequired,
+    deleteBlog: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+  }
 
   const toggleExpandedView = () => {
     setExpandedView(!expandedView)

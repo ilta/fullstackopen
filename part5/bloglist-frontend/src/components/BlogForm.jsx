@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 const BlogForm = ({ blogs, setBlogs, notify, blogFormRef }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+
+  BlogForm.propTypes = {
+    blogs: PropTypes.array.isRequired,
+    setBlogs: PropTypes.func.isRequired,
+    notify: PropTypes.func.isRequired,
+    blogFormRef: PropTypes.object.isRequired,
+  }
 
   const handleSubmitBlog = (event) => {
     event.preventDefault()
