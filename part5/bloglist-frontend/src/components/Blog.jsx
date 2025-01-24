@@ -9,11 +9,18 @@ const blogStyle = {
   marginBottom: 5,
 }
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateLikes }) => {
   const [expandedView, setExpandedView] = useState(false)
 
   const toggleExpandedView = () => {
     setExpandedView(!expandedView)
+  }
+
+  const handleLike = () => {
+    updateLikes(blog.id, {
+      ...blog,
+      likes: blog.likes + 1,
+    })
   }
 
   if (expandedView) {
@@ -24,7 +31,10 @@ const Blog = ({ blog }) => {
         </div>
         <div>{blog.url}</div>
         <div>
-          likes {blog.likes} <button>like</button>
+          likes {blog.likes}{' '}
+          <button name="likeButton" onClick={handleLike}>
+            like
+          </button>
         </div>
         <div>{blog.user.name}</div>
         <button name="expandButton" onClick={toggleExpandedView}>

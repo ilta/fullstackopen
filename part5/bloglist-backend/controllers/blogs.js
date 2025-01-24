@@ -1,7 +1,5 @@
-const jwt = require('jsonwebtoken')
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 const middleware = require('../utils/middleware')
 
 blogRouter.get('/', async (_request, response, next) => {
@@ -24,7 +22,7 @@ blogRouter.post(
       return response.status(400).json({ error: 'url is missing' })
     }
 
-    const blog = new Blog({
+    const newBlog = new Blog({
       title,
       author,
       url,
@@ -32,7 +30,7 @@ blogRouter.post(
       user: user._id,
     })
 
-    const savedBlog = await blog.save()
+    const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
 
@@ -65,22 +63,32 @@ blogRouter.delete(
   }
 )
 
-blogRouter.put('/:id', async (request, response, next) => {
-  const { title, author, url, likes } = request.body
-  const blog = {
-    title,
-    author,
-    url,
-    likes: likes || 0,
-  }
-  const opts = { new: true, runValidators: true }
+blogRouter.put(
+  '/:id',
+  middleware.userExtractor,
+  async (request, response, next) => {
+    const { title, author, url, likes } = request.body
 
-  const updatedBlog = await Blog.findByIdAndUpdate(
-    request.params.id,
-    blog,
-    opts
-  )
-  return response.json(updatedBlog)
-})
+    const newBlog = {
+      title,
+      author,
+      url,
+      likes: likes || 0,
+    }
+    const opts = { new: true, runValidators: true }
+
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      newBlog,
+      opts
+    )
+
+    if (!updatedBlog) {
+      return response.status(404).json({ error: 'blog not found' })
+    }
+
+    return response.json(updatedBlog)
+  }
+)
 
 module.exports = blogRouter
