@@ -61,7 +61,22 @@ const App = () => {
         }, 5000)
       })
       .catch((error) => {
-        console.error(error)
+        console.error(error.response.data.error)
+      })
+  }
+
+  const deleteBlog = (id, title) => {
+    blogService
+      .deletePost(id)
+      .then(() => {
+        setBlogs(blogs.filter((blog) => blog.id !== id))
+        setErrorMessage(`Deleted blog ${title}`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+      .catch((error) => {
+        console.log(error)
       })
   }
 
@@ -114,7 +129,13 @@ const App = () => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog key={blog.id} blog={blog} updateLikes={updateLikes} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateLikes={updateLikes}
+            deleteBlog={deleteBlog}
+            user={user}
+          />
         ))}
     </div>
   )

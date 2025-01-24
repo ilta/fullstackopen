@@ -9,7 +9,7 @@ const blogStyle = {
   marginBottom: 5,
 }
 
-const Blog = ({ blog, updateLikes }) => {
+const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   const [expandedView, setExpandedView] = useState(false)
 
   const toggleExpandedView = () => {
@@ -23,11 +23,20 @@ const Blog = ({ blog, updateLikes }) => {
     })
   }
 
+  const handleDelete = () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      deleteBlog(blog.id, blog.title)
+    }
+  }
+
   if (expandedView) {
     return (
       <div style={blogStyle}>
         <div>
           {blog.title} {blog.author}
+          <button name="expandButton" onClick={toggleExpandedView}>
+            hide
+          </button>
         </div>
         <div>{blog.url}</div>
         <div>
@@ -37,9 +46,11 @@ const Blog = ({ blog, updateLikes }) => {
           </button>
         </div>
         <div>{blog.user.name}</div>
-        <button name="expandButton" onClick={toggleExpandedView}>
-          hide
-        </button>
+        {user.username === blog.user.username && (
+          <button name="deleteBlogButton" onClick={handleDelete}>
+            remove
+          </button>
+        )}
       </div>
     )
   }
