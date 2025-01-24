@@ -81,7 +81,7 @@ blogRouter.put(
       request.params.id,
       newBlog,
       opts
-    )
+    ).populate('user', { name: 1, username: 1 })
 
     if (!updatedBlog) {
       return response.status(404).json({ error: 'blog not found' })

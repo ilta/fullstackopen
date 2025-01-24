@@ -221,9 +221,15 @@ describe('when the database has some initial blog posts and two users', () => {
         url: 'https://reactpatterns.com/',
         likes: 8,
       }
-      const expectedBlog = { ...blog, user: initialOwner.id }
+      const expectedUser = {
+        username: initialOwner.username,
+        name: initialOwner.name,
+        id: initialOwner.id,
+      }
+      const expectedBlog = { ...blog, user: expectedUser }
       await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .auth(token, { type: 'bearer' })
         .send(blog)
         // Checking the status code and that the response matches sent data
         .expect(200, expectedBlog)
@@ -241,9 +247,15 @@ describe('when the database has some initial blog posts and two users', () => {
         author: 'Michael Chan',
         url: 'https://reactpatterns.com/',
       }
-      const expectedBlog = { ...blog, likes: 0, user: initialOwner.id }
+      const expectedUser = {
+        username: initialOwner.username,
+        name: initialOwner.name,
+        id: initialOwner.id,
+      }
+      const expectedBlog = { ...blog, likes: 0, user: expectedUser }
       await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .auth(token, { type: 'bearer' })
         .send(blog)
         // Checking the status code and that the response matches sent data
         .expect(200, expectedBlog)
@@ -261,13 +273,19 @@ describe('when the database has some initial blog posts and two users', () => {
         url: 'https://reactpatterns.com/',
         likes: 8,
       }
+      const expectedUser = {
+        username: initialOwner.username,
+        name: initialOwner.name,
+        id: initialOwner.id,
+      }
       const expectedBlog = {
         ...blog,
         title: blogToUpdate.title,
-        user: initialOwner.id,
+        user: expectedUser,
       }
       await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .auth(token, { type: 'bearer' })
         .send(blog)
         // Checking the status code and that the response matches sent data
         .expect(200, expectedBlog)
@@ -286,6 +304,7 @@ describe('when the database has some initial blog posts and two users', () => {
       }
       const { body } = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .auth(token, { type: 'bearer' })
         .send(blog)
         // Checking the status code
         .expect(400)
