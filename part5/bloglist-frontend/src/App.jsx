@@ -9,11 +9,18 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notifyMessage, setNotifyMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
+
+  const notify = (message) => {
+    setNotifyMessage(message)
+    setTimeout(() => {
+      setNotifyMessage(null)
+    }, 5000)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -30,10 +37,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      notify('Wrong credentials')
     }
   }
 
@@ -44,10 +48,7 @@ const App = () => {
     setUser(null)
     setUsername('')
     setPassword('')
-    setErrorMessage(`logged out ${userName}`)
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
+    notify(`logged out ${userName}`)
   }
 
   const updateLikes = (id, blogObject) => {
@@ -55,10 +56,7 @@ const App = () => {
       .update(id, blogObject)
       .then((returnedBlog) => {
         setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
-        setErrorMessage(`Liked blog ${blogObject.title}`)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+        notify(`Liked blog ${blogObject.title}`)
       })
       .catch((error) => {
         console.error(error.response.data.error)
@@ -70,10 +68,7 @@ const App = () => {
       .deletePost(id)
       .then(() => {
         setBlogs(blogs.filter((blog) => blog.id !== id))
-        setErrorMessage(`Deleted blog ${title}`)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+        notify(`Deleted blog ${title}`)
       })
       .catch((error) => {
         console.log(error)
@@ -96,7 +91,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={errorMessage} />
+        <Notification message={notifyMessage} />
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -110,7 +105,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage} />
+      <Notification message={notifyMessage} />
       <h2>blogs</h2>
       <p>
         {user.name} is logged in
@@ -122,7 +117,7 @@ const App = () => {
           user={user}
           handleLogout={handleLogout}
           setBlogs={setBlogs}
-          setErrorMessage={setErrorMessage}
+          notify={notify}
           blogFormRef={blogFormRef}
         />
       </Togglable>
