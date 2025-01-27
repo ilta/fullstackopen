@@ -40,22 +40,22 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   if (expandedView) {
     return (
       <div style={blogStyle}>
-        <div>
+        <div className="blog">
           {blog.title} {blog.author}
-          <button name="expandButton" onClick={toggleExpandedView}>
+          <button className="expandButton" onClick={toggleExpandedView}>
             hide
           </button>
         </div>
         <div>{blog.url}</div>
         <div>
           likes {blog.likes}{' '}
-          <button name="likeButton" onClick={handleLike}>
+          <button className="likeButton" onClick={handleLike}>
             like
           </button>
         </div>
         <div>{blog.user.name}</div>
         {user.username === blog.user.username && (
-          <button name="deleteBlogButton" onClick={handleDelete}>
+          <button className="deleteBlogButton" onClick={handleDelete}>
             remove
           </button>
         )}
@@ -66,7 +66,7 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
-      <button name="expandButton" onClick={toggleExpandedView}>
+      <button className="expandButton" onClick={toggleExpandedView}>
         view
       </button>
     </div>
