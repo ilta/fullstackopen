@@ -149,4 +149,27 @@ describe('<Blog />', () => {
     const likes = screen.queryByText('likes 6')
     expect(likes).toBeNull()
   })
+
+  test('if like button is clicked twice, the event handler is called twice', async () => {
+    const updateLikes = vi.fn()
+    const deleteBlog = vi.fn()
+    const user = userEvent.setup()
+
+    const container = render(
+      <Blog
+        blog={blog}
+        updateLikes={updateLikes}
+        deleteBlog={deleteBlog}
+        user={blog.user}
+      />
+    ).container
+
+    const expandButton = container.querySelector('.expandButton')
+    await user.click(expandButton)
+
+    const likeButton = container.querySelector('.likeButton')
+    await user.click(likeButton)
+    await user.click(likeButton)
+    expect(updateLikes.mock.calls).toHaveLength(2)
+  })
 })
