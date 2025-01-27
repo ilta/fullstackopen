@@ -1,36 +1,26 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
 
-const BlogForm = ({ blogs, setBlogs, notify, blogFormRef }) => {
+const BlogForm = ({ blogFormRef, createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
   BlogForm.propTypes = {
-    blogs: PropTypes.array.isRequired,
-    setBlogs: PropTypes.func.isRequired,
-    notify: PropTypes.func.isRequired,
     blogFormRef: PropTypes.object.isRequired,
+    createBlog: PropTypes.func.isRequired,
   }
 
   const handleSubmitBlog = (event) => {
     event.preventDefault()
     const newBlog = { title, author, url }
 
+    createBlog(newBlog)
+
     blogFormRef.current.toggleVisibility()
-    blogService
-      .create(newBlog)
-      .then((result) => {
-        setBlogs(blogs.concat(result))
-        setTitle('')
-        setAuthor('')
-        setUrl('')
-        notify(`a new blog ${result.title} by ${result.author} added`)
-      })
-      .catch((error) => {
-        notify(error.response.data.error)
-      })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
@@ -44,6 +34,7 @@ const BlogForm = ({ blogs, setBlogs, notify, blogFormRef }) => {
             value={title}
             name="title"
             onChange={({ target }) => setTitle(target.value)}
+            placeholder="write title here"
           />
         </div>
         <div>
@@ -53,6 +44,7 @@ const BlogForm = ({ blogs, setBlogs, notify, blogFormRef }) => {
             value={author}
             name="author"
             onChange={({ target }) => setAuthor(target.value)}
+            placeholder="write author here"
           />
         </div>
         <div>
@@ -62,6 +54,7 @@ const BlogForm = ({ blogs, setBlogs, notify, blogFormRef }) => {
             value={url}
             name="url"
             onChange={({ target }) => setUrl(target.value)}
+            placeholder="https://... or http://..."
           />
         </div>
         <button type="submit">create</button>

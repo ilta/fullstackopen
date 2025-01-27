@@ -51,6 +51,23 @@ const App = () => {
     notify(`logged out ${userName}`)
   }
 
+  const createBlog = (newBlog) => {
+    blogService
+      .create(newBlog)
+      .then((result) => {
+        // Rewrite the returned blog to allow immediate blog deletion
+        result = {
+          ...result,
+          user: { id: result.user, username: user.username },
+        }
+        setBlogs(blogs.concat(result))
+        notify(`a new blog ${result.title} by ${result.author} added`)
+      })
+      .catch((error) => {
+        notify(error.response.data.error)
+      })
+  }
+
   const updateLikes = (id, blogObject) => {
     blogService
       .update(id, blogObject)
@@ -114,11 +131,10 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm
           blogs={blogs}
-          user={user}
-          handleLogout={handleLogout}
           setBlogs={setBlogs}
           notify={notify}
           blogFormRef={blogFormRef}
+          createBlog={createBlog}
         />
       </Togglable>
       {blogs
