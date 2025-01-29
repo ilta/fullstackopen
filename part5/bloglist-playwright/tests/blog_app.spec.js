@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith } = require('./helper')
+const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -55,6 +55,44 @@ describe('Blog app', () => {
       await expect(
         page.getByText('First class tests Robert C. Martin')
       ).toBeVisible()
+    })
+
+    describe('and some blogs exist', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(
+          page,
+          'React patterns',
+          'Michael Chan',
+          'https://reactpatterns.com/',
+          true
+        )
+        await createBlog(
+          page,
+          'Go To Statement Considered Harmful',
+          'Edsger W. Dijkstra',
+          'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+          true
+        )
+        await createBlog(
+          page,
+          'Canonical string reduction',
+          'Edsger W. Dijkstra',
+          'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+          true
+        )
+      })
+
+      test('a blog post can be liked', async ({ page }) => {
+        await page
+          .locator('div')
+          .filter({
+            hasText: /^Go To Statement Considered Harmful Edsger W. Dijkstra/,
+          })
+          .getByRole('button', { name: 'view' })
+          .click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await expect(page.getByText('likes 1')).toBeVisible()
+      })
     })
   })
 })
