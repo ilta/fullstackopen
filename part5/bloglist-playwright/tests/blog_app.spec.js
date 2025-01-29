@@ -93,6 +93,23 @@ describe('Blog app', () => {
         await page.getByRole('button', { name: 'like' }).click()
         await expect(page.getByText('likes 1')).toBeVisible()
       })
+
+      test('a blog post can be deleted', async ({ page }) => {
+        await page
+          .locator('div')
+          .filter({
+            hasText: /^Go To Statement Considered Harmful Edsger W. Dijkstra/,
+          })
+          .getByRole('button', { name: 'view' })
+          .click()
+        page.on('dialog', (dialog) => dialog.accept())
+        await page.getByRole('button', { name: 'remove' }).click()
+        await expect(
+          page.getByText(
+            'Go To Statement Considered Harmful Edsger W. Dijkstra'
+          )
+        ).not.toBeVisible()
+      })
     })
   })
 })
