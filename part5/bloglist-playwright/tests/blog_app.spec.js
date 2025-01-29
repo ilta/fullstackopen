@@ -110,6 +110,31 @@ describe('Blog app', () => {
           )
         ).not.toBeVisible()
       })
+
+      test('delete button is not shown if user did not add the post', async ({
+        page,
+        request,
+      }) => {
+        // Create another user, log out and log back in with the second account
+        await request.post('/api/users', {
+          data: {
+            name: 'Nottim Player',
+            username: 'nottim',
+            password: 'this password is also too weak',
+          },
+        })
+        await page.getByRole('button', { name: 'logout' }).click()
+        await loginWith(page, 'nottim', 'this password is also too weak')
+
+        await page
+          .locator('div')
+          .filter({
+            hasText: /^Go To Statement Considered Harmful Edsger W. Dijkstra/,
+          })
+          .getByRole('button', { name: 'view' })
+          .click()
+        await expect(page.getByText('remove')).not.toBeVisible()
+      })
     })
   })
 })
