@@ -1,6 +1,8 @@
 // eslint-disable-next-line react/prop-types
 const Notification = ({ message }) => {
-  return <div>{message}</div>
+  if (!message) return null
+
+  return <div className="notification">{message}</div>
 }
 
 export default Notification
