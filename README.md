@@ -20,5 +20,7 @@ part3/
 part4/
   bloglist-backend/
 part5/
-  bloglist-frontend/
+  bloglist-backend/    backend copied from part4 with modifications
+  bloglist-frontend/   
+  bloglist-playwright/ 
 ```
