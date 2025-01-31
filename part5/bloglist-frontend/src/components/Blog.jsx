@@ -65,7 +65,9 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
 
   return (
     <div style={blogStyle}>
-      {blog.title} {blog.author}
+      <span className="blog">
+        {blog.title} {blog.author}
+      </span>
       <button className="expandButton" onClick={toggleExpandedView}>
         view
       </button>

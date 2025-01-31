@@ -135,6 +135,36 @@ describe('Blog app', () => {
           .click()
         await expect(page.getByText('remove')).not.toBeVisible()
       })
+
+      test('blog posts are sorted per likes, descending order', async ({
+        page,
+      }) => {
+        /* Expand the second blog ("Go To Statements...") by clicking "view".
+           Then click "like" and "hide".
+           
+           => "React patterns" and "Go To Statements..." should switch 
+           positions, because the first has 0 likes.
+        */
+        await page
+          .locator('div')
+          .filter({
+            hasText: /^Go To Statement Considered Harmful Edsger W. Dijkstra/,
+          })
+          .getByRole('button', { name: 'view' })
+          .click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await page.getByRole('button', { name: 'hide' }).click()
+
+        const blogs = await page.locator('.blog').all()
+        const expectedTitleAuthor = [
+          'Go To Statement Considered Harmful Edsger W. Dijkstra',
+          'React patterns Michael Chan',
+          'Canonical string reduction Edsger W. Dijkstra',
+        ]
+        await expect(blogs[0]).toHaveText(expectedTitleAuthor[0])
+        await expect(blogs[1]).toHaveText(expectedTitleAuthor[1])
+        await expect(blogs[2]).toHaveText(expectedTitleAuthor[2])
+      })
     })
   })
 })
