@@ -24,5 +24,6 @@ part5/
   bloglist-frontend/   
   bloglist-playwright/
 part6/
+  redux-anecdotes/
   unicade-redux/
 ```
