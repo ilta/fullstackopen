@@ -22,5 +22,7 @@ part4/
 part5/
   bloglist-backend/    backend copied from part4 with modifications
   bloglist-frontend/   
-  bloglist-playwright/ 
+  bloglist-playwright/
+part6/
+  unicade-redux/
 ```
