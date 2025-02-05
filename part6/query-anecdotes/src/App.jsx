@@ -2,6 +2,7 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getAnecdotes, voteAnecdote } from './requests'
+import { useNotifyDispatch } from './NotifyContext'
 
 const App = () => {
   const { data, isLoading, isError } = useQuery({
@@ -11,10 +12,18 @@ const App = () => {
   })
 
   const queryClient = useQueryClient()
+  const dispatch = useNotifyDispatch()
 
   const voteAnecdoteMutation = useMutation({
     mutationFn: voteAnecdote,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['anecdotes'] }),
+    onSuccess: (anecdote) => {
+      queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+      dispatch({
+        type: 'NOTIFY',
+        payload: `anecdote '${anecdote.content}' voted`,
+      })
+      setTimeout(() => dispatch({ type: 'CLEAR' }), 5000)
+    },
   })
 
   if (isLoading) return <div>loading...</div>
