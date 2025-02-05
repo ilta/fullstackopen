@@ -9,7 +9,7 @@ export const createAnecdote = (newAnecdote) =>
 
 export const voteAnecdote = (anecdote) => {
   const updatedAnecdote = { ...anecdote, votes: anecdote.votes + 1 }
-  axios
+  return axios
     .put(`${baseUrl}/${anecdote.id}`, updatedAnecdote)
     .then((res) => res.data)
 }
