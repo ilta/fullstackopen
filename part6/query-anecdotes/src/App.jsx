@@ -18,11 +18,7 @@ const App = () => {
     mutationFn: voteAnecdote,
     onSuccess: (anecdote) => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
-      dispatch({
-        type: 'NOTIFY',
-        payload: `anecdote '${anecdote.content}' voted`,
-      })
-      setTimeout(() => dispatch({ type: 'CLEAR' }), 5000)
+      dispatch(`anecdote '${anecdote.content}' voted`)
     },
   })
 

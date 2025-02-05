@@ -37,7 +37,11 @@ export const useNotifyMessage = () => {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useNotifyDispatch = () => {
   const messageAndDispatch = useContext(NotifyContext)
-  return messageAndDispatch[1]
+  const dispatch = messageAndDispatch[1]
+  return (payload) => {
+    dispatch({ type: 'NOTIFY', payload })
+    setTimeout(() => dispatch({ type: 'CLEAR' }), 5000)
+  }
 }
 
 export default NotifyContext
