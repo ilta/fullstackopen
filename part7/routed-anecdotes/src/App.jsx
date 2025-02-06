@@ -98,6 +98,14 @@ const Footer = () => (
   </div>
 )
 
+// A custom input component that discards unknown attribute "reset" and adds
+// attribute "name" to enable form auto-fill etc.
+
+// eslint-disable-next-line react/prop-types, no-unused-vars
+const Input = ({ type, reset, ...rest }) => {
+  return <input type={type} {...rest} name={type} />
+}
+
 const CreateNew = (props) => {
   const content = useField('content')
   const author = useField('author')
@@ -113,23 +121,30 @@ const CreateNew = (props) => {
     })
   }
 
+  const handleReset = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} onReset={handleReset}>
         <div>
           content
-          <input {...content} />
+          <Input {...content} />
         </div>
         <div>
           author
-          <input {...author} />
+          <Input {...author} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <Input {...info} />
         </div>
         <button>create</button>
+        <button type="reset">reset</button>
       </form>
     </div>
   )
