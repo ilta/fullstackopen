@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
-import { Routes, Route, Link, useMatch } from 'react-router-dom'
+import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
 
-const Menu = () => {
+const Menu = ({ notification }) => {
   const padding = {
     paddingRight: 5,
   }
@@ -17,8 +17,13 @@ const Menu = () => {
       <Link to="about" style={padding}>
         about
       </Link>
+      <div>{notification}</div>
     </div>
   )
+}
+
+Menu.propTypes = {
+  notification: PropTypes.string || PropTypes.exact(null),
 }
 
 const Anecdote = ({ anecdote }) => {
@@ -165,9 +170,14 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
 
+  const navigate = useNavigate()
+
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => setNotification(null), 5000)
+    navigate('/')
   }
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
@@ -191,7 +201,7 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Menu />
+      <Menu notification={notification} />
       <Routes>
         <Route
           path="anecdotes"
