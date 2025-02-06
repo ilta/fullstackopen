@@ -103,7 +103,7 @@ const Footer = () => (
 
 // eslint-disable-next-line react/prop-types, no-unused-vars
 const Input = ({ type, reset, ...rest }) => {
-  return <input type={type} {...rest} name={type} />
+  return <input {...rest} name={type} />
 }
 
 const CreateNew = (props) => {
