@@ -6,21 +6,16 @@ import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { useDispatch } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [notifyMessage, setNotifyMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
-
-  const notify = (message) => {
-    setNotifyMessage(message)
-    setTimeout(() => {
-      setNotifyMessage(null)
-    }, 5000)
-  }
+  const dispatch = useDispatch()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -37,7 +32,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      notify('Wrong credentials')
+      dispatch(setNotification('Wrong credentials'))
     }
   }
 
@@ -48,7 +43,7 @@ const App = () => {
     setUser(null)
     setUsername('')
     setPassword('')
-    notify(`logged out ${userName}`)
+    dispatch(setNotification(`logged out ${userName}`))
   }
 
   const createBlog = (newBlog) => {
@@ -61,10 +56,14 @@ const App = () => {
           user: { id: result.user, username: user.username },
         }
         setBlogs(blogs.concat(result))
-        notify(`a new blog ${result.title} by ${result.author} added`)
+        dispatch(
+          setNotification(
+            `a new blog ${result.title} by ${result.author} added`
+          )
+        )
       })
       .catch((error) => {
-        notify(error.response.data.error)
+        dispatch(setNotification(error.response.data.error))
       })
   }
 
@@ -73,7 +72,7 @@ const App = () => {
       .update(id, blogObject)
       .then((returnedBlog) => {
         setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
-        notify(`Liked blog ${blogObject.title}`)
+        dispatch(setNotification(`Liked blog ${blogObject.title}`))
       })
       .catch((error) => {
         console.error(error.response.data.error)
@@ -85,7 +84,7 @@ const App = () => {
       .deletePost(id)
       .then(() => {
         setBlogs(blogs.filter((blog) => blog.id !== id))
-        notify(`Deleted blog ${title}`)
+        dispatch(setNotification(`Deleted blog ${title}`))
       })
       .catch((error) => {
         console.log(error)
@@ -108,7 +107,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={notifyMessage} />
+        <Notification />
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -122,20 +121,14 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={notifyMessage} />
+      <Notification />
       <h2>blogs</h2>
       <p>
         {user.name} is logged in
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm
-          blogs={blogs}
-          setBlogs={setBlogs}
-          notify={notify}
-          blogFormRef={blogFormRef}
-          createBlog={createBlog}
-        />
+        <BlogForm blogFormRef={blogFormRef} createBlog={createBlog} />
       </Togglable>
       {blogs
         .sort((a, b) => b.likes - a.likes)

@@ -28,7 +28,7 @@ part6/
   redux-anecdotes/
   unicade-redux/
 part7/
-  bloglist-redux/
+  bloglist-redux/      fronted from part5; use with backend from part5
   country-hook/
   routed-anecdotes/
   ultimate-hooks/
