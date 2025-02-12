@@ -21,10 +21,15 @@ part4/
   bloglist-backend/
 part5/
   bloglist-backend/    backend copied from part4 with modifications
-  bloglist-frontend/   
+  bloglist-frontend/
   bloglist-playwright/
 part6/
   query-anecdotes/
   redux-anecdotes/
   unicade-redux/
+part7/
+  bloglist-redux/
+  country-hook/
+  routed-anecdotes/
+  ultimate-hooks/
 ```
