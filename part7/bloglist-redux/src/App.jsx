@@ -6,16 +6,23 @@ import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import { addBlog, initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  // const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  const blogs = useSelector((state) => state.blogs)
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -47,31 +54,15 @@ const App = () => {
   }
 
   const createBlog = (newBlog) => {
-    blogService
-      .create(newBlog)
-      .then((result) => {
-        // Rewrite the returned blog to allow immediate blog deletion
-        result = {
-          ...result,
-          user: { id: result.user, username: user.username },
-        }
-        setBlogs(blogs.concat(result))
-        dispatch(
-          setNotification(
-            `a new blog ${result.title} by ${result.author} added`
-          )
-        )
-      })
-      .catch((error) => {
-        dispatch(setNotification(error.response.data.error))
-      })
+    dispatch(addBlog(newBlog))
   }
 
   const updateLikes = (id, blogObject) => {
     blogService
       .update(id, blogObject)
       .then((returnedBlog) => {
-        setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
+        // FIX this later
+        // setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
         dispatch(setNotification(`Liked blog ${blogObject.title}`))
       })
       .catch((error) => {
@@ -83,17 +74,14 @@ const App = () => {
     blogService
       .deletePost(id)
       .then(() => {
-        setBlogs(blogs.filter((blog) => blog.id !== id))
+        // FIX this later
+        // setBlogs(blogs.filter((blog) => blog.id !== id))
         dispatch(setNotification(`Deleted blog ${title}`))
       })
       .catch((error) => {
         console.log(error)
       })
   }
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -130,17 +118,15 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm blogFormRef={blogFormRef} createBlog={createBlog} />
       </Togglable>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={updateLikes}
-            deleteBlog={deleteBlog}
-            user={user}
-          />
-        ))}
+      {blogs.map((blog) => (
+        <Blog
+          key={blog.id}
+          blog={blog}
+          updateLikes={updateLikes}
+          deleteBlog={deleteBlog}
+          user={user}
+        />
+      ))}
     </div>
   )
 }
