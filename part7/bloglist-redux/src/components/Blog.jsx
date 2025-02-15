@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
+import { initializeBlogs } from '../reducers/blogReducer'
 
 const blogStyle = {
   paddingTop: 10,
@@ -75,4 +77,35 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   )
 }
 
-export default Blog
+const Blogs = ({ updateLikes, deleteBlog, user }) => {
+  Blogs.propTypes = {
+    updateLikes: PropTypes.func.isRequired,
+    deleteBlog: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+  }
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  const blogs = useSelector((state) => state.blogs)
+
+  return (
+    <>
+      {blogs &&
+        blogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateLikes={updateLikes}
+            deleteBlog={deleteBlog}
+            user={user}
+          />
+        ))}
+    </>
+  )
+}
+
+export default Blogs

@@ -3,12 +3,12 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
-import Blog from './components/Blog'
+import Blogs from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
-import { addBlog, initializeBlogs } from './reducers/blogReducer'
+import { addBlog } from './reducers/blogReducer'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
@@ -17,12 +17,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(initializeBlogs())
-  }, [dispatch])
-
-  const blogs = useSelector((state) => state.blogs)
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -118,15 +112,7 @@ const App = () => {
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm blogFormRef={blogFormRef} createBlog={createBlog} />
       </Togglable>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateLikes={updateLikes}
-          deleteBlog={deleteBlog}
-          user={user}
-        />
-      ))}
+      <Blogs updateLikes={updateLikes} deleteBlog={deleteBlog} user={user} />
     </div>
   )
 }
