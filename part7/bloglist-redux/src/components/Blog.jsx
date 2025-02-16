@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
-import { initializeBlogs } from '../reducers/blogReducer'
+import { initializeBlogs, likeBlog, deleteBlog } from '../reducers/blogReducer'
 
 const blogStyle = {
   paddingTop: 10,
@@ -12,13 +12,12 @@ const blogStyle = {
   marginBottom: 5,
 }
 
-const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
+const Blog = ({ blog, user }) => {
   const [expandedView, setExpandedView] = useState(false)
+  const dispatch = useDispatch()
 
   Blog.propTypes = {
     blog: PropTypes.object.isRequired,
-    updateLikes: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
   }
 
@@ -27,15 +26,12 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   }
 
   const handleLike = () => {
-    updateLikes(blog.id, {
-      ...blog,
-      likes: blog.likes + 1,
-    })
+    dispatch(likeBlog(blog))
   }
 
   const handleDelete = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      deleteBlog(blog.id, blog.title)
+      dispatch(deleteBlog(blog))
     }
   }
 
@@ -77,10 +73,8 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   )
 }
 
-const Blogs = ({ updateLikes, deleteBlog, user }) => {
+const Blogs = ({ user }) => {
   Blogs.propTypes = {
-    updateLikes: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired,
     user: PropTypes.object.isRequired,
   }
 
@@ -95,15 +89,7 @@ const Blogs = ({ updateLikes, deleteBlog, user }) => {
   return (
     <>
       {blogs &&
-        blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={updateLikes}
-            deleteBlog={deleteBlog}
-            user={user}
-          />
-        ))}
+        blogs.map((blog) => <Blog key={blog.id} blog={blog} user={user} />)}
     </>
   )
 }

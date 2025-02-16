@@ -8,7 +8,6 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useDispatch } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
-import { addBlog } from './reducers/blogReducer'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
@@ -47,36 +46,6 @@ const App = () => {
     dispatch(setNotification(`logged out ${userName}`))
   }
 
-  const createBlog = (newBlog) => {
-    dispatch(addBlog(newBlog))
-  }
-
-  const updateLikes = (id, blogObject) => {
-    blogService
-      .update(id, blogObject)
-      .then((returnedBlog) => {
-        // FIX this later
-        // setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
-        dispatch(setNotification(`Liked blog ${blogObject.title}`))
-      })
-      .catch((error) => {
-        console.error(error.response.data.error)
-      })
-  }
-
-  const deleteBlog = (id, title) => {
-    blogService
-      .deletePost(id)
-      .then(() => {
-        // FIX this later
-        // setBlogs(blogs.filter((blog) => blog.id !== id))
-        dispatch(setNotification(`Deleted blog ${title}`))
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
@@ -110,9 +79,9 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm blogFormRef={blogFormRef} createBlog={createBlog} />
+        <BlogForm blogFormRef={blogFormRef} user={user} />
       </Togglable>
-      <Blogs updateLikes={updateLikes} deleteBlog={deleteBlog} user={user} />
+      <Blogs user={user} />
     </div>
   )
 }
