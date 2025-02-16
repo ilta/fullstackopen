@@ -1,39 +1,37 @@
-import { useState, useEffect, useRef } from 'react'
-import blogService from './services/blogs'
+import { useState, useRef } from 'react'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
-import Blog from './components/Blog'
+import Blogs from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useNotifyDispatch } from '../NotifyContext'
-import { useQuery } from '@tanstack/react-query'
+import { useUser, useUserDispatch } from '../UserContext'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   const dispatch = useNotifyDispatch()
+  const setUser = useUserDispatch()
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['blogs'],
-    queryFn: blogService.getAll,
-  })
+  const user = useUser()
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
+      const loginUser = await loginService.login({
         username,
         password,
       })
 
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      window.localStorage.setItem(
+        'loggedBlogAppUser',
+        JSON.stringify(loginUser)
+      )
+      setUser(loginUser)
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -43,55 +41,11 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
-    blogService.setToken(null)
-    const userName = user.name
     setUser(null)
     setUsername('')
     setPassword('')
-    dispatch(`logged out ${userName}`)
+    dispatch(`logged out ${user.name}`)
   }
-
-  const updateLikes = (id, blogObject) => {
-    blogService
-      .update(id, blogObject)
-      .then((returnedBlog) => {
-        // FIX later
-        //setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
-        dispatch(`Liked blog ${blogObject.title}`)
-      })
-      .catch((error) => {
-        console.error(error.response.data.error)
-      })
-  }
-
-  const deleteBlog = (id, title) => {
-    blogService
-      .deletePost(id)
-      .then(() => {
-        // FIX later
-        //setBlogs(blogs.filter((blog) => blog.id !== id))
-        dispatch(`Deleted blog ${title}`)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
-
-  if (isLoading) return <div>loading...</div>
-
-  if (isError)
-    return <div>anecdote service not available due to problems in server</div>
-
-  const blogs = data
 
   if (user === null) {
     return (
@@ -117,19 +71,9 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm blogs={blogs} blogFormRef={blogFormRef} user={user} />
+        <BlogForm blogFormRef={blogFormRef} user={user} />
       </Togglable>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={updateLikes}
-            deleteBlog={deleteBlog}
-            user={user}
-          />
-        ))}
+      <Blogs />
     </div>
   )
 }

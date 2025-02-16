@@ -3,13 +3,15 @@ import PropTypes from 'prop-types'
 import blogService from '../services/blogs'
 import { useNotifyDispatch } from '../../NotifyContext'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useUser } from '../../UserContext'
 
-const BlogForm = ({ blogFormRef, user }) => {
+const BlogForm = ({ blogFormRef }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
   const queryClient = useQueryClient()
+  const user = useUser()
 
   const newBlogMutation = useMutation({
     mutationFn: blogService.create,
@@ -18,7 +20,7 @@ const BlogForm = ({ blogFormRef, user }) => {
       // Add user to the post to enable deleting the post without app reload
       newBlog = {
         ...newBlog,
-        user: { id: newBlog.user, username: user.username },
+        user: { id: newBlog.user, username: user.username, name: user.name },
       }
       queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
 
@@ -33,7 +35,6 @@ const BlogForm = ({ blogFormRef, user }) => {
 
   BlogForm.propTypes = {
     blogFormRef: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
   }
 
   const handleSubmitBlog = (event) => {
