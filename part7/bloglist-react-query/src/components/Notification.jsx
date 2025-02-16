@@ -1,5 +1,8 @@
-// eslint-disable-next-line react/prop-types
-const Notification = ({ message }) => {
+import { useNotifyMessage } from '../../NotifyContext'
+
+const Notification = () => {
+  const message = useNotifyMessage()
+
   if (!message) return null
 
   return <div className="notification">{message}</div>

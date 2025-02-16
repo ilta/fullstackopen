@@ -6,21 +6,16 @@ import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { useNotifyDispatch } from '../NotifyContext'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [notifyMessage, setNotifyMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
-  const notify = (message) => {
-    setNotifyMessage(message)
-    setTimeout(() => {
-      setNotifyMessage(null)
-    }, 5000)
-  }
+  const dispatch = useNotifyDispatch()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -37,7 +32,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      notify('Wrong credentials')
+      dispatch('Wrong credentials')
     }
   }
 
@@ -48,7 +43,7 @@ const App = () => {
     setUser(null)
     setUsername('')
     setPassword('')
-    notify(`logged out ${userName}`)
+    dispatch(`logged out ${userName}`)
   }
 
   const createBlog = (newBlog) => {
@@ -61,10 +56,10 @@ const App = () => {
           user: { id: result.user, username: user.username },
         }
         setBlogs(blogs.concat(result))
-        notify(`a new blog ${result.title} by ${result.author} added`)
+        dispatch(`a new blog ${result.title} by ${result.author} added`)
       })
       .catch((error) => {
-        notify(error.response.data.error)
+        dispatch(error.response.data.error)
       })
   }
 
@@ -73,7 +68,7 @@ const App = () => {
       .update(id, blogObject)
       .then((returnedBlog) => {
         setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
-        notify(`Liked blog ${blogObject.title}`)
+        dispatch(`Liked blog ${blogObject.title}`)
       })
       .catch((error) => {
         console.error(error.response.data.error)
@@ -85,7 +80,7 @@ const App = () => {
       .deletePost(id)
       .then(() => {
         setBlogs(blogs.filter((blog) => blog.id !== id))
-        notify(`Deleted blog ${title}`)
+        dispatch(`Deleted blog ${title}`)
       })
       .catch((error) => {
         console.log(error)
@@ -108,7 +103,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={notifyMessage} />
+        <Notification />
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -122,7 +117,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={notifyMessage} />
+      <Notification />
       <h2>blogs</h2>
       <p>
         {user.name} is logged in
@@ -132,7 +127,6 @@ const App = () => {
         <BlogForm
           blogs={blogs}
           setBlogs={setBlogs}
-          notify={notify}
           blogFormRef={blogFormRef}
           createBlog={createBlog}
         />
