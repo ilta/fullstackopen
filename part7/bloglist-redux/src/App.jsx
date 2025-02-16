@@ -1,34 +1,28 @@
 import { useState, useEffect, useRef } from 'react'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Blogs from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import { login, logout, setUser } from './reducers/loginReducer'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const blogFormRef = useRef()
   const dispatch = useDispatch()
+
+  const user = useSelector((state) => state.user)
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      dispatch(login(username, password))
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -37,25 +31,22 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogAppUser')
-    blogService.setToken(null)
-    const userName = user.name
-    setUser(null)
+    dispatch(logout(user.username))
+    dispatch(setUser(null))
     setUsername('')
     setPassword('')
-    dispatch(setNotification(`logged out ${userName}`))
+    dispatch(setNotification(`logged out ${user.name}`))
   }
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      dispatch(setUser(user))
     }
-  }, [])
+  }, [dispatch])
 
-  if (user === null) {
+  if (!user) {
     return (
       <div>
         <Notification />
