@@ -1,21 +1,45 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import blogService from '../services/blogs'
+import { useNotifyDispatch } from '../../NotifyContext'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-const BlogForm = ({ blogFormRef, createBlog }) => {
+const BlogForm = ({ blogFormRef, user }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
+  const queryClient = useQueryClient()
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      // Add user to the post to enable deleting the post without app reload
+      newBlog = {
+        ...newBlog,
+        user: { id: newBlog.user, username: user.username },
+      }
+      queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
+
+      dispatch(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+    },
+    onError: (data) => {
+      dispatch(data.response.data.error)
+    },
+  })
+
+  const dispatch = useNotifyDispatch()
+
   BlogForm.propTypes = {
     blogFormRef: PropTypes.object.isRequired,
-    createBlog: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
   }
 
   const handleSubmitBlog = (event) => {
     event.preventDefault()
     const newBlog = { title, author, url }
-
-    createBlog(newBlog)
+    newBlogMutation.mutate(newBlog)
 
     blogFormRef.current.toggleVisibility()
     setTitle('')

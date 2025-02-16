@@ -7,15 +7,20 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useNotifyDispatch } from '../NotifyContext'
+import { useQuery } from '@tanstack/react-query'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   const dispatch = useNotifyDispatch()
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+  })
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -46,28 +51,12 @@ const App = () => {
     dispatch(`logged out ${userName}`)
   }
 
-  const createBlog = (newBlog) => {
-    blogService
-      .create(newBlog)
-      .then((result) => {
-        // Rewrite the returned blog to allow immediate blog deletion
-        result = {
-          ...result,
-          user: { id: result.user, username: user.username },
-        }
-        setBlogs(blogs.concat(result))
-        dispatch(`a new blog ${result.title} by ${result.author} added`)
-      })
-      .catch((error) => {
-        dispatch(error.response.data.error)
-      })
-  }
-
   const updateLikes = (id, blogObject) => {
     blogService
       .update(id, blogObject)
       .then((returnedBlog) => {
-        setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
+        // FIX later
+        //setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
         dispatch(`Liked blog ${blogObject.title}`)
       })
       .catch((error) => {
@@ -79,17 +68,14 @@ const App = () => {
     blogService
       .deletePost(id)
       .then(() => {
-        setBlogs(blogs.filter((blog) => blog.id !== id))
+        // FIX later
+        //setBlogs(blogs.filter((blog) => blog.id !== id))
         dispatch(`Deleted blog ${title}`)
       })
       .catch((error) => {
         console.log(error)
       })
   }
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -99,6 +85,13 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  if (isLoading) return <div>loading...</div>
+
+  if (isError)
+    return <div>anecdote service not available due to problems in server</div>
+
+  const blogs = data
 
   if (user === null) {
     return (
@@ -124,12 +117,7 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm
-          blogs={blogs}
-          setBlogs={setBlogs}
-          blogFormRef={blogFormRef}
-          createBlog={createBlog}
-        />
+        <BlogForm blogs={blogs} blogFormRef={blogFormRef} user={user} />
       </Togglable>
       {blogs
         .sort((a, b) => b.likes - a.likes)
