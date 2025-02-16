@@ -4,9 +4,11 @@ import BlogForm from './components/BlogForm'
 import Blogs from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import Users from './components/Users'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { login, logout, setUser } from './reducers/loginReducer'
+import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
@@ -69,10 +71,20 @@ const App = () => {
         {user.name} is logged in
         <button onClick={handleLogout}>logout</button>
       </p>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm blogFormRef={blogFormRef} user={user} />
-      </Togglable>
-      <Blogs user={user} />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                <BlogForm blogFormRef={blogFormRef} user={user} />
+              </Togglable>
+              <Blogs user={user} />
+            </>
+          }
+        />
+        <Route path="/users" element={<Users />} />
+      </Routes>
     </div>
   )
 }
