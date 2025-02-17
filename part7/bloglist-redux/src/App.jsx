@@ -4,11 +4,11 @@ import BlogForm from './components/BlogForm'
 import Blogs from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import Users from './components/Users'
+import Users, { User } from './components/Users'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { login, logout, setUser } from './reducers/loginReducer'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useMatch } from 'react-router-dom'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
@@ -48,6 +48,8 @@ const App = () => {
     }
   }, [dispatch])
 
+  const userMatch = useMatch('/users/:id')
+
   if (!user) {
     return (
       <div>
@@ -84,6 +86,7 @@ const App = () => {
           }
         />
         <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<User userMatch={userMatch} />} />
       </Routes>
     </div>
   )
