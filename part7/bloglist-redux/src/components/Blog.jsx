@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 import { Link, useNavigate } from 'react-router-dom'
+import CommentForm from './CommentForm'
 
 const blogStyle = {
   paddingTop: 10,
@@ -62,6 +63,7 @@ export const Blog = ({ blogMatch }) => {
           </button>
         )}
         <h3>comments</h3>
+        <CommentForm id={blog.id} />
         <ul>
           {blog.comments.map((comment) => (
             <li key={comment.id}>{comment.content}</li>

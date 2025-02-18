@@ -36,7 +36,7 @@ blogRouter.post(
 
     await newBlog.save()
     // Populate with 'user' so that the frontend doesn't have to manipulate the
-    // field, e.g. to allow immediate blog deletion without reloading the app
+    // field, e.g. to allow immediate blog deletion without reloading the app.
     const savedBlog = await Blog.findById(newBlog._id).populate('user', {
       name: 1,
       username: 1,
@@ -53,12 +53,7 @@ blogRouter.post(
   '/:id/comments',
   middleware.userExtractor,
   async (request, response, next) => {
-    // Populate with 'user' and 'comment' so that the frontend doesn't have to
-    // manipulate the fields, e.g. to allow immediate blog deletion without
-    // reloading app
     const blog = await Blog.findById(request.params.id)
-      .populate('user', { name: 1, username: 1 })
-      .populate('comments', { content: 1 })
 
     if (!blog) {
       return response.status(404).json({ error: 'blog not found' })
@@ -78,7 +73,16 @@ blogRouter.post(
     blog.comments = blog.comments.concat(savedComment._id)
     const savedBlog = await blog.save()
 
-    response.status(201).json(savedBlog)
+    // Customized simplified comment response that enables modifying the list
+    // of comments in the frontend without reloading a bunch of data from the
+    // server.
+    const commentResponse = {
+      blogId: savedBlog._id,
+      commentId: savedComment._id,
+      content,
+    }
+
+    response.status(201).json(commentResponse)
   }
 )
 
