@@ -8,7 +8,7 @@ import Users, { User } from './components/Users'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { login, logout, setUser } from './reducers/loginReducer'
-import { Route, Routes, useMatch } from 'react-router-dom'
+import { Link, Route, Routes, useMatch } from 'react-router-dom'
 
 const App = () => {
   // const [blogs, setBlogs] = useState([])
@@ -66,14 +66,21 @@ const App = () => {
     )
   }
 
+  const navBarStyle = {
+    color: 'gray',
+    background: 'cyan',
+    fontStyle: 'italic',
+  }
+
   return (
     <div>
-      <Notification />
-      <h2>blogs</h2>
-      <p>
-        {user.name} is logged in
+      <div style={navBarStyle}>
+        <Link to="/">blogs</Link> | <Link to="/users">users</Link> | {user.name}{' '}
+        logged in
         <button onClick={handleLogout}>logout</button>
-      </p>
+      </div>
+      <Notification />
+      <h2>blog app</h2>
       <Routes>
         <Route
           path="/"
