@@ -1,0 +1,8 @@
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "tim",
+  "name": "Tim Player",
+  "password": "this password is too weak"
+}
