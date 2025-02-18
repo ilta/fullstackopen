@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 import { addBlog } from '../reducers/blogReducer'
 
-const BlogForm = ({ blogFormRef, user }) => {
+const BlogForm = ({ blogFormRef }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -11,14 +11,13 @@ const BlogForm = ({ blogFormRef, user }) => {
 
   BlogForm.propTypes = {
     blogFormRef: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
   }
 
   const handleSubmitBlog = (event) => {
     event.preventDefault()
     const newBlog = { title, author, url }
 
-    dispatch(addBlog(newBlog, user))
+    dispatch(addBlog(newBlog))
 
     blogFormRef.current.toggleVisibility()
     setTitle('')

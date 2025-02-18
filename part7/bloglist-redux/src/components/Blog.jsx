@@ -1,8 +1,7 @@
-import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
-import { initializeBlogs, likeBlog, deleteBlog } from '../reducers/blogReducer'
-import { Link } from 'react-router-dom'
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
+import { Link, useNavigate } from 'react-router-dom'
 
 const blogStyle = {
   paddingTop: 10,
@@ -20,15 +19,11 @@ export const Blog = ({ blogMatch }) => {
 
   const id = blogMatch.params.id
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const blogs = useSelector((state) => state.blogs)
   const blog = blogs.filter((b) => b.id === id)[0]
   const user = useSelector((state) => state.user)
-
-  // If the page is accessed directly, blogs have not been initialized yet
-  if (!blog) {
-    dispatch(initializeBlogs())
-  }
 
   if (!blog || !user) return null
 
@@ -39,6 +34,7 @@ export const Blog = ({ blogMatch }) => {
   const handleDelete = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       dispatch(deleteBlog(blog))
+      navigate('/')
     }
   }
 
@@ -91,12 +87,6 @@ const BlogLine = ({ blog }) => {
 }
 
 const Blogs = () => {
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(initializeBlogs())
-  }, [dispatch])
-
   const blogs = useSelector((state) => state.blogs)
 
   return (

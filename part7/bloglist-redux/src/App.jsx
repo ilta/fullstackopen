@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { login, logout, setUser } from './reducers/loginReducer'
 import { Link, Route, Routes, useMatch } from 'react-router-dom'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  // const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const blogFormRef = useRef()
@@ -46,6 +46,10 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       dispatch(setUser(user))
     }
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
   }, [dispatch])
 
   const userMatch = useMatch('/users/:id')
@@ -87,7 +91,7 @@ const App = () => {
           element={
             <>
               <Togglable buttonLabel="new blog" ref={blogFormRef}>
-                <BlogForm blogFormRef={blogFormRef} user={user} />
+                <BlogForm blogFormRef={blogFormRef} />
               </Togglable>
               <Blogs user={user} />
             </>

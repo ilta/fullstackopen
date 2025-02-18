@@ -34,15 +34,10 @@ export const initializeBlogs = () => {
   }
 }
 
-export const addBlog = (payload, user) => {
+export const addBlog = (payload) => {
   return async (dispatch) => {
     try {
       const newBlog = await blogService.create(payload)
-      // manipulate blog so it can be deleted without reloading the app
-      newBlog.user = {
-        name: user.name,
-        username: user.username,
-      }
       dispatch(appendBlogs(newBlog))
       dispatch(
         setNotification(
