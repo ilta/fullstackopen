@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 export const User = ({ userMatch }) => {
   User.propTypes = {
-    userMatch: PropTypes.object || null,
+    userMatch: PropTypes.object,
   }
 
   const id = userMatch.params.id

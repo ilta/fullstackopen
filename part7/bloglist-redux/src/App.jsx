@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
-import Blogs from './components/Blog'
+import Blogs, { Blog } from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import Users, { User } from './components/Users'
@@ -49,6 +49,7 @@ const App = () => {
   }, [dispatch])
 
   const userMatch = useMatch('/users/:id')
+  const blogMatch = useMatch('/blogs/:id')
 
   if (!user) {
     return (
@@ -85,6 +86,7 @@ const App = () => {
             </>
           }
         />
+        <Route path="/blogs/:id" element={<Blog blogMatch={blogMatch} />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User userMatch={userMatch} />} />
       </Routes>

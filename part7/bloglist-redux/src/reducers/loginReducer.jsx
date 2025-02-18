@@ -20,7 +20,9 @@ const userSlice = createSlice({
       return null
     },
     userSet(state, action) {
-      return action.payload
+      const user = action.payload
+      blogService.setToken(user.token)
+      return user
     },
   },
 })

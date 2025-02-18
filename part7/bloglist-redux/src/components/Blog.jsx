@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 import { initializeBlogs, likeBlog, deleteBlog } from '../reducers/blogReducer'
+import { Link } from 'react-router-dom'
 
 const blogStyle = {
   paddingTop: 10,
@@ -12,18 +13,24 @@ const blogStyle = {
   marginBottom: 5,
 }
 
-const Blog = ({ blog, user }) => {
-  const [expandedView, setExpandedView] = useState(false)
+export const Blog = ({ blogMatch }) => {
+  Blog.propTypes = {
+    blogMatch: PropTypes.object,
+  }
+
+  const id = blogMatch.params.id
   const dispatch = useDispatch()
 
-  Blog.propTypes = {
-    blog: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
+  const blogs = useSelector((state) => state.blogs)
+  const blog = blogs.filter((b) => b.id === id)[0]
+  const user = useSelector((state) => state.user)
+
+  // If the page is accessed directly, blogs have not been initialized yet
+  if (!blog) {
+    dispatch(initializeBlogs())
   }
 
-  const toggleExpandedView = () => {
-    setExpandedView(!expandedView)
-  }
+  if (!blog || !user) return null
 
   const handleLike = () => {
     dispatch(likeBlog(blog))
@@ -35,49 +42,49 @@ const Blog = ({ blog, user }) => {
     }
   }
 
-  if (expandedView) {
-    return (
-      <div style={blogStyle}>
-        <div className="blog">
+  return (
+    <>
+      <div>
+        <h2>
           {blog.title} {blog.author}
-          <button className="expandButton" onClick={toggleExpandedView}>
-            hide
-          </button>
-        </div>
-        <div>{blog.url}</div>
+        </h2>
+      </div>
+      <div style={blogStyle}>
         <div>
-          likes {blog.likes}{' '}
+          <a href={blog.url}>{blog.url}</a>
+        </div>
+        <div>
+          {blog.likes} likes
           <button className="likeButton" onClick={handleLike}>
             like
           </button>
         </div>
-        <div>{blog.user.name}</div>
+        <div>added by {blog.user.name}</div>
         {user.username === blog.user.username && (
           <button className="deleteBlogButton" onClick={handleDelete}>
             remove
           </button>
         )}
       </div>
-    )
+    </>
+  )
+}
+
+const BlogLine = ({ blog }) => {
+  BlogLine.propTypes = {
+    blog: PropTypes.object.isRequired,
   }
 
   return (
     <div style={blogStyle}>
       <span className="blog">
-        {blog.title} {blog.author}
+        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
       </span>
-      <button className="expandButton" onClick={toggleExpandedView}>
-        view
-      </button>
     </div>
   )
 }
 
-const Blogs = ({ user }) => {
-  Blogs.propTypes = {
-    user: PropTypes.object.isRequired,
-  }
-
+const Blogs = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -87,10 +94,7 @@ const Blogs = ({ user }) => {
   const blogs = useSelector((state) => state.blogs)
 
   return (
-    <>
-      {blogs &&
-        blogs.map((blog) => <Blog key={blog.id} blog={blog} user={user} />)}
-    </>
+    <>{blogs && blogs.map((blog) => <BlogLine key={blog.id} blog={blog} />)}</>
   )
 }
 
