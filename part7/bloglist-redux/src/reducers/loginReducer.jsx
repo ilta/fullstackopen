@@ -21,7 +21,7 @@ const userSlice = createSlice({
     },
     userSet(state, action) {
       const user = action.payload
-      blogService.setToken(user.token)
+      if (user && user.token) blogService.setToken(user.token)
       return user
     },
   },

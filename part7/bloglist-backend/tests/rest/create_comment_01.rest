@@ -1,0 +1,7 @@
+POST http://localhost:5173/api/blogs/67b47eb0480574f999433063/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNoZWlsYSIsImlkIjoiNjc4ZWJjMDkxYmU0NTIzZTliNzI2N2Q1IiwiaWF0IjoxNzM3NzM1MDIwfQ.-FFxiDULVjd1wkJwJKIIuq88dYk_dJ2oxZbA14V3-7Q
+
+{
+  "content": "sweet"
+}
