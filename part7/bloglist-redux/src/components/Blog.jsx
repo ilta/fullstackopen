@@ -3,15 +3,7 @@ import PropTypes from 'prop-types'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 import { Link, useNavigate } from 'react-router-dom'
 import CommentForm from './CommentForm'
-
-const blogStyle = {
-  paddingTop: 10,
-  paddingLeft: 2,
-  marginRight: '8em',
-  border: 'solid',
-  borderWidth: 1,
-  marginBottom: 5,
-}
+import { Button } from './Elements'
 
 export const Blog = ({ blogMatch }) => {
   Blog.propTypes = {
@@ -41,34 +33,44 @@ export const Blog = ({ blogMatch }) => {
 
   return (
     <>
-      <div>
+      <div className="mx-1">
         <h2>
-          {blog.title} {blog.author}
+          <span className="italic">{blog.title}</span> by{' '}
+          <span className="font-semibold">{blog.author}</span>
         </h2>
       </div>
-      <div style={blogStyle}>
+      <div className="border rounded-2xl mx-2 p-1">
         <div>
-          <a href={blog.url}>{blog.url}</a>
+          <a
+            className="hover:bg-fuchsia-700 hover:text-gray-100 text-gray-900 visited:text-orange-500"
+            href={blog.url}
+          >
+            {blog.url}
+          </a>
         </div>
-        <div>
-          {blog.likes} likes
-          <button className="likeButton" onClick={handleLike}>
+        <div className="flex">
+          <span className="w-48">{blog.likes} likes</span>
+          <Button className="likeButton" onClick={handleLike}>
             like
-          </button>
+          </Button>
         </div>
-        <div>added by {blog.user.name}</div>
+        <div>
+          added by <span className="italic">{blog.user.name}</span>
+        </div>
         {user.username === blog.user.username && (
-          <button className="deleteBlogButton" onClick={handleDelete}>
+          <Button className="deleteBlogButton" onClick={handleDelete}>
             remove
-          </button>
+          </Button>
         )}
-        <h3>comments</h3>
-        <CommentForm id={blog.id} />
-        <ul>
-          {blog.comments.map((comment) => (
-            <li key={comment.id}>{comment.content}</li>
-          ))}
-        </ul>
+        <div className="ml-1.5">
+          <h3 className="mt-2 font-semibold">comments</h3>
+          <CommentForm id={blog.id} />
+          <ul>
+            {blog.comments.map((comment) => (
+              <li key={comment.id}>{comment.content}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </>
   )
@@ -80,11 +82,17 @@ const BlogLine = ({ blog }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <span className="blog">
-        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
-      </span>
-    </div>
+    <tr className="px-1 mb-1.5 mr-4 odd:bg-gray-50 even:bg-amber-200">
+      <td className="blog">
+        <Link
+          className="hover:bg-fuchsia-700 hover:text-gray-100 text-gray-900 ml-1.5 visited:text-orange-500 italic underline"
+          to={`/blogs/${blog.id}`}
+        >
+          {blog.title}
+        </Link>{' '}
+        by <span className="font-semibold text-gray-700">{blog.author}</span>
+      </td>
+    </tr>
   )
 }
 
@@ -92,7 +100,13 @@ const Blogs = () => {
   const blogs = useSelector((state) => state.blogs)
 
   return (
-    <>{blogs && blogs.map((blog) => <BlogLine key={blog.id} blog={blog} />)}</>
+    <div className="rounded-2xl m-2 p-2 border bg-amber-200">
+      <table className="w-full">
+        <tbody>
+          {blogs && blogs.map((blog) => <BlogLine key={blog.id} blog={blog} />)}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

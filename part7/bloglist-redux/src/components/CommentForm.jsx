@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addComment } from '../reducers/blogReducer'
 import PropTypes from 'prop-types'
+import { Button, Input } from './Elements'
 
 const CommentForm = ({ id }) => {
   CommentForm.propTypes = {
@@ -23,15 +24,16 @@ const CommentForm = ({ id }) => {
     <div>
       <form onSubmit={handleSubmitComment}>
         <div>
-          <input
+          <Input
+            className="w-80"
             data-testid="comment"
             type="text"
             value={comment}
             name="comment"
             onChange={({ target }) => setComment(target.value)}
             placeholder="new comment"
-          />
-          <button type="submit">add comment</button>
+          />{' '}
+          <Button type="submit">add comment</Button>
         </div>
       </form>
     </div>

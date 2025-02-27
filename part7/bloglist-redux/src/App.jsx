@@ -10,6 +10,7 @@ import { setNotification } from './reducers/notificationReducer'
 import { login, logout, setUser } from './reducers/loginReducer'
 import { Link, Route, Routes, useMatch } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogReducer'
+import { Button, H2 } from './components/Elements'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -70,21 +71,27 @@ const App = () => {
     )
   }
 
-  const navBarStyle = {
-    color: 'gray',
-    background: 'cyan',
-    fontStyle: 'italic',
-  }
-
   return (
     <div>
-      <div style={navBarStyle}>
-        <Link to="/">blogs</Link> | <Link to="/users">users</Link> | {user.name}{' '}
-        logged in
-        <button onClick={handleLogout}>logout</button>
+      <div className="bg-purple-500 rounded-2xl p-1.5 flex gap-3.5 ml-0.5 mr-0.5">
+        <Link
+          className="hover:bg-amber-700 text-gray-100 ml-1.5 visited:text-amber-300"
+          to="/"
+        >
+          blogs
+        </Link>
+        <Link
+          className="hover:bg-amber-700 text-gray-100 visited:text-amber-300"
+          to="/users"
+        >
+          users
+        </Link>
+        {/* Spacer between navigation links and logout button */}
+        <span className="w-full"></span>
+        <Button onClick={handleLogout}>logout</Button>
       </div>
       <Notification />
-      <h2>blog app</h2>
+      <H2>blog app</H2>
       <Routes>
         <Route
           path="/"

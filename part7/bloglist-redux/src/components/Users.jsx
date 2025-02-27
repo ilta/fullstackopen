@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeUsers } from '../reducers/userReducer'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { H2, H3 } from './Elements'
 
 export const User = ({ userMatch }) => {
   User.propTypes = {
@@ -18,13 +19,15 @@ export const User = ({ userMatch }) => {
 
   return (
     <div>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
-        {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
-        ))}
-      </ul>
+      <H2>{user.name}</H2>
+      <div className="ml-4">
+        <H3>added blogs:</H3>
+        <ul className="ml-2">
+          {user.blogs.map((blog) => (
+            <li key={blog.id}>{blog.title}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }
@@ -37,9 +40,14 @@ const UserLine = ({ user }) => {
   return (
     <tr>
       <td>
-        <Link to={`/users/${user.id}`}>{user.name}</Link>
+        <Link
+          className="hover:bg-fuchsia-700 hover:text-gray-100 text-gray-900 ml-1.5 visited:text-orange-500 px-1"
+          to={`/users/${user.id}`}
+        >
+          {user.name}
+        </Link>
       </td>
-      <td>{user.blogs.length}</td>
+      <td className="pl-1">{user.blogs.length}</td>
     </tr>
   )
 }
@@ -53,22 +61,24 @@ const Users = () => {
   const users = useSelector((state) => state.users)
 
   return (
-    <div>
-      <h2>Users</h2>
-      <table>
-        <tbody>
-          <tr>
-            <td></td>
-            <td>
-              <strong>blogs created</strong>
-            </td>
-          </tr>
-          {users.map((user) => (
-            <UserLine key={user.id} user={user} />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <H3>Users</H3>
+      <div className="rounded-2xl bg-amber-200 m-2">
+        <table className="ml-2">
+          <thead>
+            <tr className="bg-gray-600">
+              <th className="font-bold px-2 text-gray-200">user</th>
+              <th className="font-bold px-2 text-gray-200">blogs created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <UserLine key={user.id} user={user} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }
 
