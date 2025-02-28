@@ -1,0 +1,23 @@
+{
+  "name": "library",
+  "version": "1.0.0",
+  "description": "part8: library backend",
+  "main": "library-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilta/fullstackopen.git"
+  },
+  "author": "Ilkka Tommola <ilta@iki.fi>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ilta/fullstackopen/issues"
+  },
+  "homepage": "https://github.com/ilta/fullstackopen",
+  "dependencies": {
+    "@apollo/server": "^4.11.3",
+    "graphql": "^16.10.0"
+  }
+}
