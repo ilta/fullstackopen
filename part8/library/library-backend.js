@@ -188,7 +188,7 @@ const resolvers = {
       return book
     },
     editAuthor: (root, args) => {
-      if (!args.author || !args.setBornTo) return null
+      if (!args.name || !args.setBornTo) return null
 
       const author = authors.find((author) => author.name === args.name)
       if (!author) return null
