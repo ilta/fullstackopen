@@ -11,20 +11,33 @@ const NewBook = () => {
 
   const [createBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }],
+    onCompleted: () => {
+      setTitle('')
+      setPublished('')
+      setAuthor('')
+      setGenres([])
+      setGenre('')
+    },
+    onError: (error) => {
+      const messages = error.graphQLErrors.map((e) => e.message).join('\n')
+      console.error(messages)
+    },
   })
 
   const submit = async (event) => {
     event.preventDefault()
 
-    createBook({
-      variables: { title, published: parseInt(published, 10), author, genres },
-    })
-
-    setTitle('')
-    setPublished('')
-    setAuthor('')
-    setGenres([])
-    setGenre('')
+    // Basic sanity check that prevents submit when values are empty
+    if (title && author && genres.length > 0) {
+      createBook({
+        variables: {
+          title,
+          published: parseInt(published, 10),
+          author,
+          genres,
+        },
+      })
+    }
   }
 
   const addGenre = () => {
