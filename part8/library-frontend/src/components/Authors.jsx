@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { ALL_AUTHORS, MODIFY_AUTHOR } from '../queries'
 import { useMutation, useQuery } from '@apollo/client'
+import Select from 'react-select'
+import PropTypes from 'prop-types'
 
-const ModifyAuthorForm = () => {
-  const [name, setName] = useState('')
+const ModifyAuthorForm = ({ authors }) => {
   const [born, setBorn] = useState('')
+  const [selectedOption, setSelectedOption] = useState(null)
   const [modifyAuthor] = useMutation(MODIFY_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
     onCompleted: () => {
-      setName('')
+      setSelectedOption(null)
       setBorn('')
     },
     onError: (error) => {
@@ -17,34 +19,47 @@ const ModifyAuthorForm = () => {
     },
   })
 
+  const options = authors.map((author) => ({
+    value: author.name,
+    label: author.name,
+  }))
+
   const submit = async (event) => {
     event.preventDefault()
 
     // Basic sanity check that prevents submit when values are empty
-    if (name && born) {
+    if (selectedOption && born) {
       modifyAuthor({
         variables: {
-          name,
+          name: selectedOption.value,
           born: parseInt(born, 10),
         },
       })
     }
   }
 
+  ModifyAuthorForm.propTypes = {
+    authors: PropTypes.array,
+  }
+
   return (
     <div>
       <form onSubmit={submit}>
-        <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
+        <div style={{ width: 200, marginBottom: 5 }}>
+          <Select
+            value={selectedOption}
+            onChange={setSelectedOption}
+            options={options}
+            placeholder="Select author..."
+            isClearable
           />
         </div>
         <div>
           born
           <input
             value={born}
+            type="number"
+            style={{ width: 60 }}
             onChange={({ target }) => setBorn(target.value)}
           />
         </div>
@@ -55,16 +70,16 @@ const ModifyAuthorForm = () => {
 }
 
 const Authors = () => {
-  const result = useQuery(ALL_AUTHORS)
+  const { loading, data } = useQuery(ALL_AUTHORS)
 
-  if (result.loading) return <div>loading...</div>
+  if (loading) return <div>loading...</div>
 
-  const authors = result.data.allAuthors
+  const authors = data.allAuthors
 
   return (
     <div>
       <h2>authors</h2>
-      <ModifyAuthorForm />
+      <ModifyAuthorForm authors={authors} />
       <table>
         <tbody>
           <tr>
