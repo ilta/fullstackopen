@@ -1,6 +1,11 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Book = require('./models/book')
+const Author = require('./models/author')
+const config = require('./utils/config')
 
 let authors = [
   {
@@ -98,7 +103,7 @@ const typeDefs = `
   type Book {
     title: String!
     published: Int
-    author: String!
+    author: Author!
     genres: [String!]!
     id: ID!
   }
@@ -132,22 +137,23 @@ const typeDefs = `
       published: Int
       author: String!
       genres: [String!]!
-    ): Book
+    ): Book!
   }
 
   type Mutation {
     editAuthor(
       name: String!
-      setBornTo: Int!): Author
+      setBornTo: Int!): Author!
   }
 `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
       // Find by author AND genre
+      // NOTE: finding by author or genre NOT IMPLEMENTED in this version
       if (args.author && args.genre) {
         return books.filter(
           (book) =>
@@ -164,41 +170,55 @@ const resolvers = {
       if (args.author) {
         return books.filter((book) => book.author === args.author)
       } else {
-        return books
+        return Book.find({})
       }
     },
-    allAuthors: () => authors,
+    allAuthors: async () => Author.find({}),
   },
 
   Author: {
-    bookCount: (root) => {
-      const byAuthor = books.filter((book) => book.author === root.name)
-      return byAuthor.length
-    },
+    // NOTE: NOT IMPLEMENTED in this version
+    // bookCount: (root) => {
+    //   const byAuthor = books.filter((book) => book.author === root.name)
+    //   return byAuthor.length
+    // },
   },
 
   Mutation: {
-    addBook: (root, args) => {
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-
-      if (!authors.find((author) => author.name === args.author)) {
-        authors = authors.concat({ name: args.author, id: uuid() })
+    addBook: async (root, args) => {
+      let author = await Author.findOne({ name: args.author })
+      if (!author) {
+        author = new Author({ name: args.author })
+        await author.save()
       }
+      const book = new Book({ ...args, author: author._id })
+      await book.save()
+
       return book
     },
-    editAuthor: (root, args) => {
-      if (!args.name || !args.setBornTo) return null
+    // NOTE: NOT IMPLEMENTED in this version
+    // editAuthor: (root, args) => {
+    //   if (!args.name || !args.setBornTo) return null
 
-      const author = authors.find((author) => author.name === args.name)
-      if (!author) return null
+    //   const author = authors.find((author) => author.name === args.name)
+    //   if (!author) return null
 
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a))
-      return updatedAuthor
-    },
+    //   const updatedAuthor = { ...author, born: args.setBornTo }
+    //   authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a))
+    //   return updatedAuthor
+    // },
   },
 }
+console.log('Connecting to', config.MONGODB_URI)
+
+mongoose
+  .connect(config.MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
 
 const server = new ApolloServer({
   typeDefs,
@@ -206,7 +226,7 @@ const server = new ApolloServer({
 })
 
 startStandaloneServer(server, {
-  listen: { port: 4000 },
+  listen: { port: config.PORT },
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`)
 })

@@ -4,6 +4,8 @@
   "description": "part8: library backend",
   "main": "library-backend.js",
   "scripts": {
+    "start": "node library-backend.js",
+    "dev": "nodemon library-backend.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,7 +20,13 @@
   "homepage": "https://github.com/ilta/fullstackopen",
   "dependencies": {
     "@apollo/server": "^4.11.3",
+    "dotenv": "^16.4.7",
     "graphql": "^16.10.0",
+    "mongoose": "^8.11.0",
+    "mongoose-unique-validator": "^5.0.1",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
