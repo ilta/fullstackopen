@@ -4,7 +4,11 @@ import { useMutation, useQuery } from '@apollo/client'
 import Select from 'react-select'
 import PropTypes from 'prop-types'
 
-const ModifyAuthorForm = ({ authors }) => {
+const ModifyAuthorForm = ({ authors, setError }) => {
+  ModifyAuthorForm.propTypes = {
+    setError: PropTypes.func.isRequired,
+  }
+
   const [born, setBorn] = useState('')
   const [selectedOption, setSelectedOption] = useState(null)
   const [modifyAuthor] = useMutation(MODIFY_AUTHOR, {
@@ -14,8 +18,7 @@ const ModifyAuthorForm = ({ authors }) => {
       setBorn('')
     },
     onError: (error) => {
-      const messages = error.graphQLErrors.map((e) => e.message).join('\n')
-      console.error(messages)
+      setError(error)
     },
   })
 
@@ -69,7 +72,11 @@ const ModifyAuthorForm = ({ authors }) => {
   )
 }
 
-const Authors = () => {
+const Authors = ({ setError }) => {
+  Authors.propTypes = {
+    setError: PropTypes.func.isRequired,
+  }
+
   const { loading, data } = useQuery(ALL_AUTHORS)
 
   if (loading) return <div>loading...</div>
@@ -79,7 +86,7 @@ const Authors = () => {
   return (
     <div>
       <h2>authors</h2>
-      <ModifyAuthorForm authors={authors} />
+      <ModifyAuthorForm authors={authors} setError={setError} />
       <table>
         <tbody>
           <tr>

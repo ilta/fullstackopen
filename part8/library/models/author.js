@@ -11,6 +11,7 @@ const schema = new mongoose.Schema({
   },
   born: {
     type: Number,
+    max: 2025, // For example's sake so that we can test setting erroneous birth year
   },
   books: [
     {

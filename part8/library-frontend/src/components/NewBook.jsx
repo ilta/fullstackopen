@@ -1,8 +1,13 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { ADD_BOOK, ALL_BOOKS } from '../queries'
+import PropTypes from 'prop-types'
 
-const NewBook = () => {
+const NewBook = ({ setError }) => {
+  NewBook.propTypes = {
+    setError: PropTypes.func.isRequired,
+  }
+
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -19,25 +24,21 @@ const NewBook = () => {
       setGenre('')
     },
     onError: (error) => {
-      const messages = error.graphQLErrors.map((e) => e.message).join('\n')
-      console.error(messages)
+      setError(error)
     },
   })
 
   const submit = async (event) => {
     event.preventDefault()
 
-    // Basic sanity check that prevents submit when values are empty
-    if (title && author && genres.length > 0) {
-      createBook({
-        variables: {
-          title,
-          published: parseInt(published, 10),
-          author,
-          genres,
-        },
-      })
-    }
+    createBook({
+      variables: {
+        title,
+        published: parseInt(published, 10),
+        author,
+        genres,
+      },
+    })
   }
 
   const addGenre = () => {
