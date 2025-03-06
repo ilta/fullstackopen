@@ -20,6 +20,7 @@ const typeDefs = `
     name: String!,
     born: Int,
     bookCount: Int!
+    books: [ID!]!
     id: ID!
   }
 
@@ -103,43 +104,66 @@ const resolvers = {
           },
         })
 
-      let author = await Author.findOne({ name: args.author })
-      if (!author) {
-        author = new Author({ name: args.author, books: [] })
-      }
+      const session = await mongoose.startSession()
+      session.startTransaction()
 
-      let book
+      let book, author
       try {
-        book = new Book({ ...args, author: author._id })
-        await book.save()
+        author = await Author.findOne({ name: args.author })
+        if (!author) {
+          // Note: the first parameter of Model.create() must be an array when
+          // session option is used
+          ;[author] = await Author.create([{ name: args.author, books: [] }], {
+            session,
+          })
+        }
+
+        ;[book] = await Book.create([{ ...args, author: author._id }], {
+          session,
+        })
+
+        const updatedBooks = author.books.concat(book._id)
+        await Author.updateOne(
+          { name: args.author },
+          { books: updatedBooks },
+          { session }
+        )
+
+        await session.commitTransaction()
       } catch (error) {
-        throw new GraphQLError('Saving book failed', {
+        await session.abortTransaction()
+        throw new GraphQLError('Adding a book failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
             error,
           },
         })
+      } finally {
+        session.endSession()
       }
 
-      author.books = author.books.concat(book._id)
-      try {
-        await author.save()
-      } catch (error) {
-        throw new GraphQLError('Saving author failed', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            error,
-          },
-        })
-      }
-
-      return await Book.findOne({ title: book.title }).populate('author')
+      const returnedBook = await Book.findOne({ title: book.title }).populate(
+        'author'
+      )
+      return returnedBook
     },
     editAuthor: async (root, args) => {
-      if (!args.name || !args.setBornTo) return null
+      if (!args.name)
+        throw new GraphQLError('Saving author failed: erroneous name', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+          },
+        })
 
       const author = await Author.findOne({ name: args.name })
-      if (!author) return null
+      if (!author)
+        throw new GraphQLError('Saving author failed: author not found', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+          },
+        })
 
       author.born = args.setBornTo
       try {
@@ -148,6 +172,7 @@ const resolvers = {
         throw new GraphQLError('Saving author failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
+            invalidArgs: args.setBornTo,
             error,
           },
         })
