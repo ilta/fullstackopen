@@ -3,10 +3,14 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Notification from './components/Notification'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import LoginForm from './components/LoginForm'
+import { useApolloClient } from '@apollo/client'
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
+  const [token, setToken] = useState(null)
+  const client = useApolloClient()
 
   const setError = (error) => {
     const titleErrorMessage =
@@ -35,6 +39,28 @@ const App = () => {
     }, 10000)
   }
 
+  useEffect(() => {
+    const storedToken = window.localStorage.getItem('library-user-token')
+    if (storedToken) {
+      setToken(storedToken)
+    }
+  }, [setToken])
+
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
+  if (!token) {
+    return (
+      <div>
+        <Notification errorMessage={errorMessage} />
+        <LoginForm setToken={setToken} setError={setError} />
+      </div>
+    )
+  }
+
   return (
     <Router>
       <div>
@@ -48,6 +74,7 @@ const App = () => {
           <Link style={{ padding: 5 }} to="/add">
             add book
           </Link>
+          <button onClick={logout}>logout</button>
         </div>
         <Notification errorMessage={errorMessage} />
 
