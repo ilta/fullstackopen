@@ -10,7 +10,9 @@ const ListGenres = ({ genres, setBooksByGenre, setActiveGenreName }) => {
     setActiveGenreName: PropTypes.func.isRequired,
   }
 
-  const [getGenre, { data }] = useLazyQuery(BOOKS_BY_GENRE)
+  const [getGenre, { data }] = useLazyQuery(BOOKS_BY_GENRE, {
+    fetchPolicy: 'cache-and-network',
+  })
 
   useEffect(() => {
     if (data) {

@@ -6,7 +6,7 @@ import ListGenres from './ListGenres'
 
 export const BookRecommendations = ({ favoriteGenre }) => {
   BookRecommendations.propTypes = {
-    favoriteGenre: PropTypes.string.isRequired,
+    favoriteGenre: PropTypes.string || null,
   }
 
   const { loading, data } = useQuery(BOOKS_BY_GENRE, {
