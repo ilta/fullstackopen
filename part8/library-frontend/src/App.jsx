@@ -1,5 +1,5 @@
 import Authors from './components/Authors'
-import Books from './components/Books'
+import Books, { BookRecommendations } from './components/Books'
 import NewBook from './components/NewBook'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Notification from './components/Notification'
@@ -95,7 +95,7 @@ const App = () => {
           <Route path="/books" element={<Books />} />
           <Route
             path="/recommended"
-            element={<Books favoriteGenre={favoriteGenre} />}
+            element={<BookRecommendations favoriteGenre={favoriteGenre} />}
           />
           <Route path="/add" element={<NewBook setError={setError} />} />
           <Route path="/" element={<></>} />
