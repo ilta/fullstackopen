@@ -6,7 +6,7 @@ import Notification from './components/Notification'
 import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
 import { useApolloClient, useLazyQuery, useSubscription } from '@apollo/client'
-import { BOOK_ADDED, ME } from './queries'
+import { ALL_BOOKS, BOOK_ADDED, ME } from './queries'
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
@@ -35,9 +35,30 @@ const App = () => {
     }
   }
 
+  // Used for checking whether a book is included in the list of books in cache
+  const includedIn = (set, object) => set.map((b) => b.id).includes(object.id)
+
+  const updateCache = (bookAdded) => {
+    const booksInCache = client.cache.readQuery({ query: ALL_BOOKS })
+
+    if (!includedIn(booksInCache.allBooks, bookAdded)) {
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(bookAdded),
+        }
+      })
+    } else {
+      console.log(
+        `"${bookAdded.title}" already exists: skipped adding it to the list`
+      )
+    }
+  }
+
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
-      window.alert(`New book ${data.data.bookAdded.title} added`)
+      const bookAdded = data.data.bookAdded
+      window.alert(`New book ${bookAdded.title} added`)
+      updateCache(bookAdded)
     },
   })
 
