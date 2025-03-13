@@ -5,8 +5,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Notification from './components/Notification'
 import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
-import { useApolloClient, useLazyQuery } from '@apollo/client'
-import { ME } from './queries'
+import { useApolloClient, useLazyQuery, useSubscription } from '@apollo/client'
+import { BOOK_ADDED, ME } from './queries'
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
@@ -34,6 +34,12 @@ const App = () => {
       notify(messages)
     }
   }
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      window.alert(`New book ${data.data.bookAdded.title} added`)
+    },
+  })
 
   const notify = (message) => {
     setErrorMessage(message)
