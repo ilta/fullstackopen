@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../queries'
+import { ADD_BOOK, ALL_AUTHORS } from '../queries'
 import PropTypes from 'prop-types'
 
-const NewBook = ({ setError }) => {
+const NewBook = ({ setError, updateCache }) => {
   NewBook.propTypes = {
     setError: PropTypes.func.isRequired,
+    updateCache: PropTypes.func.isRequired,
   }
 
   const [title, setTitle] = useState('')
@@ -15,7 +16,11 @@ const NewBook = ({ setError }) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (cache, { data }) => {
+      // Updating allBooks query
+      updateCache(data.addBook)
+    },
     onCompleted: () => {
       setTitle('')
       setPublished('')

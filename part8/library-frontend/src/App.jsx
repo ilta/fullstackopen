@@ -39,9 +39,12 @@ const App = () => {
   const includedIn = (set, object) => set.map((b) => b.id).includes(object.id)
 
   const updateCache = (bookAdded) => {
+    // Update books in cache
     const booksInCache = client.cache.readQuery({ query: ALL_BOOKS })
-
-    if (!includedIn(booksInCache.allBooks, bookAdded)) {
+    if (
+      booksInCache?.allBooks &&
+      !includedIn(booksInCache.allBooks, bookAdded)
+    ) {
       client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
         return {
           allBooks: allBooks.concat(bookAdded),
@@ -124,7 +127,10 @@ const App = () => {
             path="/recommended"
             element={<BookRecommendations favoriteGenre={favoriteGenre} />}
           />
-          <Route path="/add" element={<NewBook setError={setError} />} />
+          <Route
+            path="/add"
+            element={<NewBook setError={setError} updateCache={updateCache} />}
+          />
           <Route path="/" element={<></>} />
         </Routes>
       </div>
