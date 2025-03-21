@@ -13,12 +13,16 @@ interface Rating {
   ratingDescription: string
 }
 
-const rateExercises = (average: number, target: number): Rating => {
-  if (average === 0)
-    throw new Error("average of exercises was zero")
+interface exerciseInput {
+  exercises: number[]
+  target: number
+}
 
-  const ratio = target !== 0 ? target / average : 0
-  console.log(ratio)
+const rateExercises = (average: number, target: number): Rating => {
+  if (average <= 0)
+    throw new Error("average of exercises must be greater than zero")
+
+  const ratio = target > 0 ? target / average : 0
 
   switch (true) {
     case ratio === 0:
@@ -46,7 +50,24 @@ const rateExercises = (average: number, target: number): Rating => {
   }
 }
 
-const calculateExercises = (exercises: number[], target: number) => {
+const parseExerciseArguments =(args: string[]): exerciseInput => {
+  if (args.length < 4) 
+    throw new Error("not enough arguments")
+  
+  const [,, target, ...rest] = args
+  const exercises = rest.map((hours) => {
+    if (!isNaN(Number(hours))) return Number(hours)
+    else throw new Error("all provided values are not numbers")
+    })
+  
+  if (!isNaN(Number(target))) return {
+    exercises,
+    target: Number(target)
+  }
+  else throw new Error("target is not a number")
+}
+
+const calculateExercises = (exercises: number[], target: number): Result => {
   const periodLength = exercises.length
   const trainingDays = exercises.filter((time) => time > 0).length
 
@@ -68,7 +89,14 @@ const calculateExercises = (exercises: number[], target: number) => {
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 0))
-console.log(calculateExercises([3, 4, 2, 4.5, 4, 3, 1], 0x2))
-console.log(calculateExercises([0], 2))
+try {
+  const {target, exercises} = parseExerciseArguments(process.argv)
+  console.log(calculateExercises(exercises, target))
+} catch (error) {
+  let errorMessage = "Error: "
+  if (error instanceof Error)
+    errorMessage += error.message
+  console.error(errorMessage)
+  console.log("Usage: calculateExercises <target> <day #1 hours>...[day #n hours]")
+  console.log("Example: calculateExercises 2 1 0 2 4.5 0 3 1 0 4")
+}

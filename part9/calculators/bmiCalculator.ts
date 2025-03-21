@@ -1,4 +1,24 @@
-const calculateBmi = (height: number, weight: number) => {
+type bmiResult = "Underweight (Severe thinnes)" | "Underweight (Moderate thinness)" | "Underweight (Mild thinness)" | "Normal range" | "Overweight (Pre obese)" | "Obese (Class I)" | "Obese (Class II)" | "Obese (Class III)"
+
+interface bmiInput {
+  height: number,
+  weight: number
+}
+
+const parseArguments = (args: string[]):bmiInput => {
+  if (args.length < 4) throw new Error("not enough arguments")
+  if (args.length > 4) throw new Error("too many arguments")
+
+  const [,, height, weight] = args
+  if (!isNaN(Number(height)) && !isNaN(Number(weight)))
+    return {
+      height: Number(height),
+      weight: Number(weight)
+    }
+  else throw new Error("Please provide two numbers")
+}
+
+const calculateBmi = (height: number, weight: number): bmiResult => {
   const bmi = weight / Math.pow(height / 100, 2)
 
   switch (true) {
@@ -23,11 +43,12 @@ const calculateBmi = (height: number, weight: number) => {
   }
 }
 
-console.log(calculateBmi(180, 40))
-console.log(calculateBmi(180, 55))
-console.log(calculateBmi(180, 58))
-console.log(calculateBmi(180, 74))
-console.log(calculateBmi(180, 85))
-console.log(calculateBmi(180, 100))
-console.log(calculateBmi(180, 120))
-console.log(calculateBmi(180, 200))
+try {
+  const { height, weight } = parseArguments(process.argv)
+  console.log(calculateBmi(height, weight))
+} catch (error) {
+  let errorMessage = "Error: "
+  if (error instanceof Error)
+    errorMessage += error.message
+  console.error(errorMessage)
+}
