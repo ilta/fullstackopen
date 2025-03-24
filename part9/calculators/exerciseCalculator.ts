@@ -13,8 +13,8 @@ interface Rating {
   ratingDescription: string
 }
 
-interface exerciseInput {
-  exercises: number[]
+export interface exerciseInput {
+  daily_exercises: number[]
   target: number
 }
 
@@ -55,13 +55,13 @@ const parseExerciseArguments =(args: string[]): exerciseInput => {
     throw new Error("not enough arguments");
   
   const [,, target, ...rest] = args;
-  const exercises = rest.map((hours) => {
+  const daily_exercises = rest.map((hours) => {
     if (!isNaN(Number(hours))) return Number(hours);
     else throw new Error("all provided values are not numbers");
     });
   
   if (!isNaN(Number(target))) return {
-    exercises,
+    daily_exercises,
     target: Number(target)
   };
   else throw new Error("target is not a number");
@@ -89,14 +89,18 @@ const calculateExercises = (exercises: number[], target: number): Result => {
   };
 };
 
-try {
-  const {target, exercises} = parseExerciseArguments(process.argv);
-  console.log(calculateExercises(exercises, target));
-} catch (error) {
-  let errorMessage = "Error: ";
-  if (error instanceof Error)
-    errorMessage += error.message;
-  console.error(errorMessage);
-  console.log("Usage: calculateExercises <target> <day #1 hours>...[day #n hours]");
-  console.log("Example: calculateExercises 2 1 0 2 4.5 0 3 1 0 4");
+if (require.main === module) {  
+  try {
+    const {target, daily_exercises} = parseExerciseArguments(process.argv);
+    console.log(calculateExercises(daily_exercises, target));
+  } catch (error) {
+    let errorMessage = "Error: ";
+    if (error instanceof Error)
+      errorMessage += error.message;
+    console.error(errorMessage);
+    console.log("Usage: calculateExercises <target> <day #1 hours>...[day #n hours]");
+    console.log("Example: calculateExercises 2 1 0 2 4.5 0 3 1 0 4");
+  }
 }
+
+export default calculateExercises;
