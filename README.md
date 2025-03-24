@@ -36,4 +36,8 @@ part7/
   ultimate-hooks/
 part8/
   library/              library backend
+  library-frontend/
+part9/
+  calculators/
+    test/               VS code .rest files for testing
 ```
