@@ -40,4 +40,6 @@ part8/
 part9/
   calculators/
     test/               VS code .rest files for testing
+  courseinfo/
+  patientor-backend/
 ```
