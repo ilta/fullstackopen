@@ -41,5 +41,7 @@ part9/
   calculators/
     test/               VS code .rest files for testing
   courseinfo/
+  flight-diary-backend/
+  flight-diary-frontend/
   patientor-backend/
 ```
