@@ -1,3 +1,5 @@
+// Derived from the backend
+
 export enum Weather {
   Sunny = 'sunny',
   Rainy = 'rainy',
