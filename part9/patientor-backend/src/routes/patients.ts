@@ -10,6 +10,14 @@ router.get('/', (_req, res) => {
   res.send(patientService.getNonSensitivePatientEntries());
 });
 
+router.get('/:id', (req, res) => {
+  // TODO: add error handling for invalid IDs in the future (using middleware?)
+  const foundPatient = patientService
+    .getEntries()
+    .find((p) => p.id === req.params.id);
+  res.send(foundPatient);
+});
+
 const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   try {
     NewPatientEntrySchema.parse(req.body);
@@ -19,17 +27,25 @@ const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   }
 };
 
-const errorMiddleWare = (error: unknown, _req: Request, res: Response, next: NextFunction) => {
+const errorMiddleWare = (
+  error: unknown,
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (error instanceof z.ZodError)
-    res.status(400).send({error: error.issues});
-  else
-    next(error);
+    res.status(400).send({ error: error.issues });
+  else next(error);
 };
 
-router.post('/', newPatientParser, (req: Request<unknown, unknown, NewPatientEntry>, res: Response<Patient>) => {
+router.post(
+  '/',
+  newPatientParser,
+  (req: Request<unknown, unknown, NewPatientEntry>, res: Response<Patient>) => {
     const addedPatient = patientService.addPatient(req.body);
     res.json(addedPatient);
-});
+  }
+);
 
 router.use(errorMiddleWare);
 
