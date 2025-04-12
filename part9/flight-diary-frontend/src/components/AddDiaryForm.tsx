@@ -57,29 +57,42 @@ const AddDiaryForm = ({ diaries, setDiaries }: AddDiaryFormProps) => {
         <div>
           date{' '}
           <input
+            type="date"
             value={date}
             onChange={(event) => setDate(event.target.value)}
           />
         </div>
         <div>
           visibility{' '}
-          <input
-            value={visibility}
-            // Note: here TS is asserted that visibility is of type Visibility
-            // even though that may be true or not
-            onChange={(event) =>
-              setVisibility(event.target.value as Visibility)
-            }
-          />
+          {/* Iterate through all visibility types ("great", "good", ...) */}
+          {Object.values(Visibility).map((v) => (
+            <span key={v}>
+              <input
+                type="radio"
+                value={v}
+                name="visibility"
+                checked={visibility === v}
+                onChange={() => setVisibility(v as Visibility)}
+              />
+              <label htmlFor={v}>{v}</label>
+            </span>
+          ))}
         </div>
         <div>
           weather{' '}
-          <input
-            value={weather}
-            // Note: here TS is asserted that weather is of type Weather even
-            // though that may be true or not
-            onChange={(event) => setWeather(event.target.value as Weather)}
-          />
+          {/* Iterate through all weather types ("sunny", "rainy", ...) */}
+          {Object.values(Weather).map((w) => (
+            <span key={w}>
+              <input
+                type="radio"
+                value={w}
+                name="weather"
+                checked={weather === w}
+                onChange={() => setWeather(w as Weather)}
+              />
+              <label htmlFor={w}>{w}</label>
+            </span>
+          ))}
         </div>
         <div>
           comment{' '}
