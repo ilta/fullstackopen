@@ -1,8 +1,15 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { ParamsDictionary } from 'express-serve-static-core';
 import patientService from '../services/patientService';
-import { NewPatientEntrySchema } from '../utils';
+import {
+  assertNever,
+  NewHealthCheckVisitSchema,
+  NewHospitalVisitSchema,
+  NewOccupationalHealthCareVisitSchema,
+  NewPatientEntrySchema,
+} from '../utils';
 import { z } from 'zod';
-import { NewPatientEntry, Patient } from '../types';
+import { Entry, NewEntry, NewPatientEntry, Patient } from '../types';
 
 const router = express.Router();
 
@@ -27,6 +34,36 @@ const newPatientParser = (req: Request, _res: Response, next: NextFunction) => {
   }
 };
 
+const newVisitParser = (
+  req: Request<ParamsDictionary, unknown, Entry>,
+  res: Response,
+  next: NextFunction
+) => {
+  const body = req.body;
+
+  try {
+    switch (body.type) {
+      case 'HealthCheck':
+        NewHealthCheckVisitSchema.parse(body);
+        next();
+        break;
+      case 'Hospital':
+        NewHospitalVisitSchema.parse(body);
+        next();
+        break;
+      case 'OccupationalHealthcare':
+        NewOccupationalHealthCareVisitSchema.parse(body);
+        next();
+        break;
+      default:
+        res.json('Error: unknown visit type');
+        assertNever(body);
+    }
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
 const errorMiddleWare = (
   error: unknown,
   _req: Request,
@@ -44,6 +81,19 @@ router.post(
   (req: Request<unknown, unknown, NewPatientEntry>, res: Response<Patient>) => {
     const addedPatient = patientService.addPatient(req.body);
     res.json(addedPatient);
+  }
+);
+
+router.post(
+  '/:id/entries',
+  newVisitParser,
+  (
+    req: Request<ParamsDictionary, unknown, NewEntry>,
+    res: Response<Patient>
+  ) => {
+    const patientId = req.params.id;
+    const addedVisit = patientService.addVisit(patientId, req.body);
+    res.json(addedVisit);
   }
 );
 
