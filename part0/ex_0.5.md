@@ -7,7 +7,7 @@ sequenceDiagram
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
-    server->>browser: the HTML file
+    server-->>browser: the HTML file
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
@@ -24,7 +24,7 @@ sequenceDiagram
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
-    server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+    server-->>browser: [{ "content": "test", "date": "2026-11-03T14:22:42.967Z" }, ... ]
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes

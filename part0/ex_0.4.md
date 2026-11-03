@@ -4,16 +4,16 @@ sequenceDiagram
     participant browser
     participant server
 
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     Note right of browser: The payload includes the new note ("note: something") typed in the form
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
-    server->>browser: Server responds with "Location: /exampleapp/notes" redirection header
+    server-->>browser: Server responds with "Location: /exampleapp/notes" redirection header
     deactivate server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     Note right of browser: The browser loads the file specified in Location header per previous server response
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
-    server->>browser: HTML document
+    server-->>browser: HTML document
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
@@ -30,7 +30,7 @@ sequenceDiagram
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
-    server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+    server-->>browser: [{ "content": "test", "date": "2026-11-03T14:22:42.967Z" }, ... ]
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
