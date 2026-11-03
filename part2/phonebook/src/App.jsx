@@ -16,8 +16,8 @@ const App = () => {
   });
 
   useEffect(() => {
-    personService.getAll().then((initalPersons) => {
-      setPersons(initalPersons);
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -36,7 +36,6 @@ const App = () => {
   const handleDeleteRecord = (id) => {
     const personName = persons.find((person) => person.id === id).name;
     if (window.confirm(`Delete ${personName}?`)) {
-      const note = persons.find((n) => n.id === id);
 
       personService
         .deleteRecord(id)
@@ -50,7 +49,7 @@ const App = () => {
             5000
           );
         })
-        .catch((error) => {
+        .catch(() => {
           setNotification({
             type: 'error',
             message: `The record '${personName}' was already deleted from server`,

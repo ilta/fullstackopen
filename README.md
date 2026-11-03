@@ -1,6 +1,6 @@
 # Repository for fullstackopen.com exercises
 
-File structure:
+Directory structure:
 
 ```
 part0/
