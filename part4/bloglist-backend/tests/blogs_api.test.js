@@ -18,9 +18,9 @@ beforeEach(async () => {
 
   let userObject = {}
 
-  for (let user of helper.initialUsers) {
-    let { username, name, password } = user
-    let passwordHash = await bcrypt.hash(password, 10)
+  for (const user of helper.initialUsers) {
+    const { username, name, password } = user
+    const passwordHash = await bcrypt.hash(password, 10)
     userObject = new User({ username, name, passwordHash })
     token = jwt.sign(
       { username: username, id: userObject._id },
@@ -31,8 +31,8 @@ beforeEach(async () => {
 
   await Blog.deleteMany({})
 
-  for (let blog of helper.initialBlogs) {
-    let blogObject = new Blog(blog)
+  for (const blog of helper.initialBlogs) {
+    const blogObject = new Blog(blog)
     blogObject.user = userObject // Use the same owner (second user) for all
     await blogObject.save()
   }
@@ -47,13 +47,13 @@ describe('when the database has some initial blog posts and two users', () => {
   })
 
   test('there are three blog posts', async () => {
-    const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, 3)
   })
 
   test('field id exists', async () => {
-    const blogsAtEnd = await helper.blogsInDb()
-    assert.ok(typeof blogsAtEnd[0].id === 'string')
+    const response = await api.get('/api/blogs')
+    assert.ok(typeof response.body[0].id === 'string')
   })
 
   test('fetching an invalid URL fails with status 404', async () => {
@@ -73,7 +73,7 @@ describe('when the database has some initial blog posts and two users', () => {
         url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
         user: initialOwner,
       }
-      const result = await api
+      await api
         .post('/api/blogs')
         .auth(token, { type: 'bearer' })
         .send(blog)

@@ -12,10 +12,10 @@ const helper = require('../utils/test_helper')
 beforeEach(async () => {
   await User.deleteMany({})
 
-  for (let user of helper.initialUsers) {
-    let { username, name, password } = user
-    let passwordHash = await bcrypt.hash(password, 10)
-    let userObject = new User({ username, name, passwordHash })
+  for (const user of helper.initialUsers) {
+    const { username, name, password } = user
+    const passwordHash = await bcrypt.hash(password, 10)
+    const userObject = new User({ username, name, passwordHash })
     await userObject.save()
   }
 })
