@@ -12,7 +12,11 @@ const App = () => {
   const [notifyMessage, setNotifyMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(() => {
+    const userValue = window.localStorage.getItem('loggedBlogAppUser')
+
+    return userValue ? JSON.parse(userValue) : null
+  })
   const blogFormRef = useRef()
 
   const notify = (message) => {
@@ -26,14 +30,12 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
+      const userResponse = await loginService.login({
         username,
         password,
       })
 
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      setUser(userResponse)
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -42,8 +44,6 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogAppUser')
-    blogService.setToken(null)
     const userName = user.name
     setUser(null)
     setUsername('')
@@ -97,13 +97,14 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+    if (user && user.token) {
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
+    } else {
+      window.localStorage.removeItem('loggedBlogAppUser')
+      blogService.setToken(null)
     }
-  }, [])
+  }, [user])
 
   if (user === null) {
     return (
