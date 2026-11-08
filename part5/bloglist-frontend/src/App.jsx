@@ -97,13 +97,11 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    if (user && user.token) {
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-    } else {
-      window.localStorage.removeItem('loggedBlogAppUser')
-      blogService.setToken(null)
-    }
+    user?.token
+    ? window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+    : window.localStorage.removeItem('loggedBlogAppUser')
+
+    blogService.setToken(user?.token ? user.token : null)
   }, [user])
 
   if (user === null) {
