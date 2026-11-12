@@ -6,11 +6,6 @@ const BlogForm = ({ blogFormRef, createBlog }) => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  BlogForm.propTypes = {
-    blogFormRef: PropTypes.object.isRequired,
-    createBlog: PropTypes.func.isRequired,
-  }
-
   const handleSubmitBlog = (event) => {
     event.preventDefault()
     const newBlog = { title, author, url }
@@ -64,6 +59,11 @@ const BlogForm = ({ blogFormRef, createBlog }) => {
       </form>
     </div>
   )
+}
+
+BlogForm.propTypes = {
+  blogFormRef: PropTypes.object.isRequired,
+  createBlog: PropTypes.func.isRequired,
 }
 
 export default BlogForm

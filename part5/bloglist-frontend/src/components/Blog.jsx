@@ -13,13 +13,6 @@ const blogStyle = {
 const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   const [expandedView, setExpandedView] = useState(false)
 
-  Blog.propTypes = {
-    blog: PropTypes.object.isRequired,
-    updateLikes: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired,
-    user: PropTypes.object.isRequired,
-  }
-
   const toggleExpandedView = () => {
     setExpandedView(!expandedView)
   }
@@ -73,6 +66,14 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
       </button>
     </div>
   )
+}
+
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  updateLikes: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 }
 
 export default Blog
