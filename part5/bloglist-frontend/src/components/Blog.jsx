@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const blogStyle = {
@@ -11,12 +10,6 @@ const blogStyle = {
 }
 
 const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
-  const [expandedView, setExpandedView] = useState(false)
-
-  const toggleExpandedView = () => {
-    setExpandedView(!expandedView)
-  }
-
   const handleLike = () => {
     updateLikes(blog.id, {
       ...blog,
@@ -30,44 +23,33 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
     }
   }
 
-  if (expandedView) {
-    return (
-      <div style={blogStyle}>
-        <div className="blog">
-          {blog.title} {blog.author}
-          <button className="expandButton" onClick={toggleExpandedView}>
-            hide
-          </button>
-        </div>
-        <div>{blog.url}</div>
-        <div>
-          likes {blog.likes}{' '}
-          <button className="likeButton" onClick={handleLike}>
-            like
-          </button>
-        </div>
-        <div>{blog.user.name}</div>
-        {user.username === blog.user.username && (
-          <button className="deleteBlogButton" onClick={handleDelete}>
-            remove
-          </button>
-        )}
-      </div>
-    )
-  }
+  if (!blog) return null
 
   return (
     <div style={blogStyle}>
-      <span className="blog">
-        {blog.title} {blog.author}
-      </span>
-      <button className="expandButton" onClick={toggleExpandedView}>
-        view
-      </button>
+      <div className='blog'>
+        <h2>
+          {blog.author}:{blog.title}
+        </h2>
+      </div>
+      <div>{blog.url}</div>
+      <div>
+        likes {blog.likes}{' '}
+        {user && (
+          <button className='likeButton' onClick={handleLike}>
+            like
+          </button>
+        )}
+      </div>
+      <div>Added by {blog.user.name}</div>
+      {user?.username === blog?.user?.username && (
+        <button className='deleteBlogButton' onClick={handleDelete}>
+          remove
+        </button>
+      )}
     </div>
   )
 }
-
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,

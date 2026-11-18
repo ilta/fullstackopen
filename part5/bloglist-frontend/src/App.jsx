@@ -6,7 +6,8 @@ import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -108,51 +109,74 @@ const App = () => {
     blogService.setToken(user?.token ? user.token : null)
   }, [user])
 
+  const blogMatch = useMatch('/blogs/:id')
+  const blog = blogMatch
+    ? blogs
+        .sort((a, b) => b.likes - a.likes)
+        .find((blog) => blog.id === blogMatch.params.id)
+    : blogs
+
   const padding = {
-    padding: 5
+    padding: 5,
   }
 
   return (
     <div>
       <Notification message={notifyMessage} />
-      <Link style={padding} to="/">blogs</Link>
+      <Link style={padding} to='/'>
+        blogs
+      </Link>
       {!user ? (
-        <Link style={padding} to='/login'>login</Link>) : (
-        <button onClick={handleLogout}>logout</button>)
-      }
+        <Link style={padding} to='/login'>
+          login
+        </Link>
+      ) : (
+        <button onClick={handleLogout}>logout</button>
+      )}
       <Routes>
-        <Route path='/login' element={ <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}/>
-        }/>
-        <Route path='/' element/>
+        <Route
+          path='/login'
+          element={
+            <LoginForm
+              handleLogin={handleLogin}
+              username={username}
+              setUsername={setUsername}
+              password={password}
+              setPassword={setPassword}
+            />
+          }
+        />
+        <Route
+          path='/blogs/:id'
+          element={
+            <Blog
+              blog={blog}
+              updateLikes={updateLikes}
+              deleteBlog={deleteBlog}
+              user={user}
+            />
+          }
+        />
+        <Route
+          path='/'
+          element={
+            <>
+              <BlogList blogs={blogs} />
+              {user && (
+                <Togglable buttonLabel='new blog' ref={blogFormRef}>
+                  <BlogForm
+                    blogs={blogs}
+                    setBlogs={setBlogs}
+                    notify={notify}
+                    blogFormRef={blogFormRef}
+                    createBlog={createBlog}
+                  />
+                </Togglable>
+              )}
+            </>
+          }
+        />
       </Routes>
-      <h2>blogs</h2>
-      {user ? (
-        <Togglable buttonLabel="new blog" ref={blogFormRef}>
-          <BlogForm
-            blogs={blogs}
-            setBlogs={setBlogs}
-            notify={notify}
-            blogFormRef={blogFormRef}
-            createBlog={createBlog}
-          />
-        </Togglable>
-      ) : null}
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={updateLikes}
-            deleteBlog={deleteBlog}
-            user={user}
-          />
-        ))}
     </div>
   )
 }
