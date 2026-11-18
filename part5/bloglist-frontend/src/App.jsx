@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 import BlogList from './components/BlogList'
 
@@ -19,7 +18,6 @@ const App = () => {
 
     return userValue ? JSON.parse(userValue) : null
   })
-  const blogFormRef = useRef()
   const navigate = useNavigate()
 
   const notify = (message) => {
@@ -67,6 +65,8 @@ const App = () => {
         }
         setBlogs(blogs.concat(result))
         notify(`a new blog ${result.title} by ${result.author} added`)
+
+        navigate('/')
       })
       .catch((error) => {
         notify(error.response.data.error)
@@ -91,6 +91,8 @@ const App = () => {
       .then(() => {
         setBlogs(blogs.filter((blog) => blog.id !== id))
         notify(`Deleted blog ${title}`)
+
+        navigate('/')
       })
       .catch((error) => {
         console.log(error)
@@ -114,7 +116,7 @@ const App = () => {
     ? blogs
         .sort((a, b) => b.likes - a.likes)
         .find((blog) => blog.id === blogMatch.params.id)
-    : blogs
+    : null
 
   const padding = {
     padding: 5,
@@ -131,7 +133,12 @@ const App = () => {
           login
         </Link>
       ) : (
-        <button onClick={handleLogout}>logout</button>
+        <>
+          <Link style={padding} to='/create'>
+            new blog
+          </Link>
+          <button onClick={handleLogout}>logout</button>
+        </>
       )}
       <Routes>
         <Route
@@ -158,24 +165,21 @@ const App = () => {
           }
         />
         <Route
-          path='/'
+          path='/create'
           element={
             <>
-              <BlogList blogs={blogs} />
               {user && (
-                <Togglable buttonLabel='new blog' ref={blogFormRef}>
-                  <BlogForm
-                    blogs={blogs}
-                    setBlogs={setBlogs}
-                    notify={notify}
-                    blogFormRef={blogFormRef}
-                    createBlog={createBlog}
-                  />
-                </Togglable>
+                <BlogForm
+                  blogs={blogs}
+                  setBlogs={setBlogs}
+                  notify={notify}
+                  createBlog={createBlog}
+                />
               )}
             </>
           }
         />
+        <Route path='/' element={<BlogList blogs={blogs} />} />
       </Routes>
     </div>
   )

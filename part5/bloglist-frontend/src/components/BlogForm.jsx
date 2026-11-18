@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const BlogForm = ({ blogFormRef, createBlog }) => {
+const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -12,7 +12,6 @@ const BlogForm = ({ blogFormRef, createBlog }) => {
 
     createBlog(newBlog)
 
-    blogFormRef.current.toggleVisibility()
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -25,37 +24,37 @@ const BlogForm = ({ blogFormRef, createBlog }) => {
         <div>
           title
           <input
-            data-testid="title"
-            type="text"
+            data-testid='title'
+            type='text'
             value={title}
-            name="title"
+            name='title'
             onChange={({ target }) => setTitle(target.value)}
-            placeholder="write title here"
+            placeholder='write title here'
           />
         </div>
         <div>
           author
           <input
-            data-testid="author"
-            type="text"
+            data-testid='author'
+            type='text'
             value={author}
-            name="author"
+            name='author'
             onChange={({ target }) => setAuthor(target.value)}
-            placeholder="write author here"
+            placeholder='write author here'
           />
         </div>
         <div>
           url
           <input
-            data-testid="url"
-            type="text"
+            data-testid='url'
+            type='text'
             value={url}
-            name="url"
+            name='url'
             onChange={({ target }) => setUrl(target.value)}
-            placeholder="https://... or http://..."
+            placeholder='https://... or http://...'
           />
         </div>
-        <button type="submit">create</button>
+        <button type='submit'>create</button>
       </form>
     </div>
   )
