@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -18,6 +19,7 @@ const App = () => {
     return userValue ? JSON.parse(userValue) : null
   })
   const blogFormRef = useRef()
+  const navigate = useNavigate()
 
   const notify = (message) => {
     setNotifyMessage(message)
@@ -38,6 +40,8 @@ const App = () => {
       setUser(userResponse)
       setUsername('')
       setPassword('')
+
+      navigate('/')
     } catch (exception) {
       notify('Wrong credentials')
     }
@@ -104,38 +108,40 @@ const App = () => {
     blogService.setToken(user?.token ? user.token : null)
   }, [user])
 
-  if (user === null) {
-    return (
-      <div>
-        <Notification message={notifyMessage} />
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-        />
-      </div>
-    )
+  const padding = {
+    padding: 5
   }
 
   return (
     <div>
       <Notification message={notifyMessage} />
+      <Link style={padding} to="/">blogs</Link>
+      {!user ? (
+        <Link style={padding} to='/login'>login</Link>) : (
+        <button onClick={handleLogout}>logout</button>)
+      }
+      <Routes>
+        <Route path='/login' element={ <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}/>
+        }/>
+        <Route path='/' element/>
+      </Routes>
       <h2>blogs</h2>
-      <p>
-        {user.name} is logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm
-          blogs={blogs}
-          setBlogs={setBlogs}
-          notify={notify}
-          blogFormRef={blogFormRef}
-          createBlog={createBlog}
-        />
-      </Togglable>
+      {user ? (
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
+          <BlogForm
+            blogs={blogs}
+            setBlogs={setBlogs}
+            notify={notify}
+            blogFormRef={blogFormRef}
+            createBlog={createBlog}
+          />
+        </Togglable>
+      ) : null}
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
