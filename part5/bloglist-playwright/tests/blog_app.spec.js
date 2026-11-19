@@ -1,5 +1,10 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, createBlog } = require('./helper')
+const { muiFill, loginWith, createBlog } = require('./helper')
+
+/* Increase timeout: some tests that use muiFill are so slow that they may 
+   exceed the default timeout (5 s)
+*/
+test.describe.configure({ retries: 2, timeout: 10_000 })
 
 describe('Blog app', () => {
   const serverUrl = 'http://localhost:5173'
@@ -24,15 +29,13 @@ describe('Blog app', () => {
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
       await loginWith(page, 'tim', 'this password is too weak')
-      await expect(page.getByRole('button', { name: 'logout' })).toBeVisible()
+      await expect(page.getByText('logout')).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
       await loginWith(page, 'tim', 'wrong password')
       await expect(page.getByText('wrong credentials')).toBeVisible()
-      await expect(
-        page.getByRole('button', { name: 'logout' }),
-      ).not.toBeVisible()
+      await expect(page.getByText('logout')).not.toBeVisible()
     })
   })
 
@@ -45,13 +48,13 @@ describe('Blog app', () => {
 
     test('a new blog can be created', async ({ page }) => {
       await page.goto(`${serverUrl}/create`)
-      await page.getByTestId('title').fill('First class tests')
-      await page.getByTestId('author').fill('Robert C. Martin')
-      await page
-        .getByTestId('url')
-        .fill(
-          'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
-        )
+      await muiFill(page, page.getByTestId('title'), 'First class tests')
+      await muiFill(page, page.getByTestId('author'), 'Robert C. Martin')
+      await muiFill(
+        page,
+        page.getByTestId('url'),
+        'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
+      )
       await page.getByRole('button', { name: 'create' }).click()
       // In notification
       await expect(

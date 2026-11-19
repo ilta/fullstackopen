@@ -1,3 +1,4 @@
+import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 
 const LoginForm = ({
@@ -12,26 +13,29 @@ const LoginForm = ({
       <h2>log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
-            data-testid="username"
-            type="text"
+          <TextField
+            label='username'
+            data-testid='username'
+            type='text'
             value={username}
-            name="Username"
+            name='Username'
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          password
-          <input
-            data-testid="password"
-            type="password"
+          <TextField
+            label='password'
+            style={{ marginTop: 10 }}
+            data-testid='password'
+            type='password'
             value={password}
-            name="Password"
+            name='Password'
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <Button type='submit' variant='contained' style={{ marginTop: 10 }}>
+          login
+        </Button>
       </form>
     </>
   )

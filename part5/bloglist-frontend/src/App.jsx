@@ -7,6 +7,7 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 import BlogList from './components/BlogList'
+import { Container } from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -123,65 +124,67 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Notification message={notifyMessage} />
-      <Link style={padding} to='/'>
-        blogs
-      </Link>
-      {!user ? (
-        <Link style={padding} to='/login'>
-          login
+    <Container>
+      <div>
+        <Notification message={notifyMessage} />
+        <Link style={padding} to='/'>
+          blogs
         </Link>
-      ) : (
-        <>
-          <Link style={padding} to='/create'>
-            new blog
+        {!user ? (
+          <Link style={padding} to='/login'>
+            login
           </Link>
-          <button onClick={handleLogout}>logout</button>
-        </>
-      )}
-      <Routes>
-        <Route
-          path='/login'
-          element={
-            <LoginForm
-              handleLogin={handleLogin}
-              username={username}
-              setUsername={setUsername}
-              password={password}
-              setPassword={setPassword}
-            />
-          }
-        />
-        <Route
-          path='/blogs/:id'
-          element={
-            <Blog
-              blog={blog}
-              updateLikes={updateLikes}
-              deleteBlog={deleteBlog}
-              user={user}
-            />
-          }
-        />
-        <Route
-          path='/create'
-          element={
-            <>
-              {user && (
-                <BlogForm
-                  blogs={blogs}
-                  setBlogs={setBlogs}
-                  notify={notify}
-                  createBlog={createBlog}
-                />
-              )}
-            </>
-          }
-        />
-        <Route path='/' element={<BlogList blogs={blogs} />} />
-      </Routes>
-    </div>
+        ) : (
+          <>
+            <Link style={padding} to='/create'>
+              new blog
+            </Link>
+            <button onClick={handleLogout}>logout</button>
+          </>
+        )}
+        <Routes>
+          <Route
+            path='/login'
+            element={
+              <LoginForm
+                handleLogin={handleLogin}
+                username={username}
+                setUsername={setUsername}
+                password={password}
+                setPassword={setPassword}
+              />
+            }
+          />
+          <Route
+            path='/blogs/:id'
+            element={
+              <Blog
+                blog={blog}
+                updateLikes={updateLikes}
+                deleteBlog={deleteBlog}
+                user={user}
+              />
+            }
+          />
+          <Route
+            path='/create'
+            element={
+              <>
+                {user && (
+                  <BlogForm
+                    blogs={blogs}
+                    setBlogs={setBlogs}
+                    notify={notify}
+                    createBlog={createBlog}
+                  />
+                )}
+              </>
+            }
+          />
+          <Route path='/' element={<BlogList blogs={blogs} />} />
+        </Routes>
+      </div>
+    </Container>
   )
 }
 
