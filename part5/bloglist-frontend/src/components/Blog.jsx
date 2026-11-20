@@ -1,12 +1,16 @@
+import { Button, Link, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 
 const blogStyle = {
   paddingTop: 10,
-  paddingLeft: 2,
+  paddingBottom: 10,
+  paddingLeft: 10,
   marginRight: '8em',
-  border: 'solid',
-  borderWidth: 1,
+  border: 'outset',
+  borderRadius: '1em',
+  borderWidth: 0.2,
   marginBottom: 5,
+  marginTop: 5,
 }
 
 const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
@@ -25,28 +29,48 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
 
   if (!blog) return null
 
+  const buttonStyle = {
+    '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' },
+    marginLeft: '0.5em',
+  }
+
   return (
     <div style={blogStyle}>
       <div className='blog'>
-        <h2>
-          {blog.author}: {blog.title}
-        </h2>
+        <Typography style={{ fontSize: 20, fontWeight: 'bold' }}>
+          {blog.title}
+        </Typography>
+        <Typography>by {blog.author}</Typography>
       </div>
-      <div>{blog.url}</div>
-      <div>
-        likes {blog.likes}{' '}
+      <div style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
+        <Link href={blog.url}>{blog.url}</Link>
+      </div>
+      <Typography>Added by {blog.user.name}</Typography>
+      <div style={{ marginTop: '0.5em' }}>
+        {blog.likes} likes
         {user && (
-          <button className='likeButton' onClick={handleLike}>
+          <Button
+            color='primary'
+            variant='outlined'
+            sx={buttonStyle}
+            className='likeButton'
+            onClick={handleLike}
+          >
             like
-          </button>
+          </Button>
+        )}
+        {user?.username === blog?.user?.username && (
+          <Button
+            color='warning'
+            variant='outlined'
+            sx={buttonStyle}
+            className='deleteBlogButton'
+            onClick={handleDelete}
+          >
+            remove
+          </Button>
         )}
       </div>
-      <div>Added by {blog.user.name}</div>
-      {user?.username === blog?.user?.username && (
-        <button className='deleteBlogButton' onClick={handleDelete}>
-          remove
-        </button>
-      )}
     </div>
   )
 }

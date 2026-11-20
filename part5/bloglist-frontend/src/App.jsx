@@ -130,7 +130,7 @@ const App = () => {
         .find((blog) => blog.id === blogMatch.params.id)
     : null
 
-  const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
+  const buttonStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
   return (
     <Container>
@@ -140,13 +140,18 @@ const App = () => {
             <Toolbar>
               <Typography style={{ fontSize: '1.5em' }}>Blog app</Typography>
               <section style={{ marginLeft: 'auto' }}>
-                <Button color='inherit' sx={style} component={Link} to='/'>
+                <Button
+                  color='inherit'
+                  sx={buttonStyle}
+                  component={Link}
+                  to='/'
+                >
                   blogs
                 </Button>
                 {!user ? (
                   <Button
                     color='inherit'
-                    sx={style}
+                    sx={buttonStyle}
                     component={Link}
                     to='/login'
                   >
@@ -156,13 +161,17 @@ const App = () => {
                   <>
                     <Button
                       color='inherit'
-                      sx={style}
+                      sx={buttonStyle}
                       component={Link}
                       to='/create'
                     >
                       new blog
                     </Button>
-                    <Button color='inherit' sx={style} onClick={handleLogout}>
+                    <Button
+                      color='inherit'
+                      sx={buttonStyle}
+                      onClick={handleLogout}
+                    >
                       logout
                     </Button>
                   </>
