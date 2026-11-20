@@ -7,7 +7,14 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
 import BlogList from './components/BlogList'
-import { Container } from '@mui/material'
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  Toolbar,
+  Typography,
+} from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -38,12 +45,13 @@ const App = () => {
       })
 
       setUser(userResponse)
+      notify({ text: `logged in ${userResponse?.name}`, type: 'success' })
       setUsername('')
       setPassword('')
 
       navigate('/')
     } catch (exception) {
-      notify('Wrong credentials')
+      notify({ text: 'Wrong credentials', type: 'error' })
     }
   }
 
@@ -52,7 +60,7 @@ const App = () => {
     setUser(null)
     setUsername('')
     setPassword('')
-    notify(`logged out ${userName}`)
+    notify({ text: `logged out ${userName}`, type: 'success' })
   }
 
   const createBlog = (newBlog) => {
@@ -65,12 +73,15 @@ const App = () => {
           user: { id: result.user, username: user.username },
         }
         setBlogs(blogs.concat(result))
-        notify(`a new blog ${result.title} by ${result.author} added`)
+        notify({
+          text: `a new blog ${result.title} by ${result.author} added`,
+          type: 'success',
+        })
 
         navigate('/')
       })
       .catch((error) => {
-        notify(error.response.data.error)
+        notify({ text: error.response.data.error, type: 'error' })
       })
   }
 
@@ -79,7 +90,7 @@ const App = () => {
       .update(id, blogObject)
       .then((returnedBlog) => {
         setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
-        notify(`Liked blog ${blogObject.title}`)
+        notify({ text: `Liked blog ${blogObject.title}`, type: 'success' })
       })
       .catch((error) => {
         console.error(error.response.data.error)
@@ -91,7 +102,7 @@ const App = () => {
       .deletePost(id)
       .then(() => {
         setBlogs(blogs.filter((blog) => blog.id !== id))
-        notify(`Deleted blog ${title}`)
+        notify({ text: `Deleted blog ${title}`, type: 'error' })
 
         navigate('/')
       })
@@ -119,29 +130,48 @@ const App = () => {
         .find((blog) => blog.id === blogMatch.params.id)
     : null
 
-  const padding = {
-    padding: 5,
-  }
+  const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
   return (
     <Container>
-      <div>
-        <Notification message={notifyMessage} />
-        <Link style={padding} to='/'>
-          blogs
-        </Link>
-        {!user ? (
-          <Link style={padding} to='/login'>
-            login
-          </Link>
-        ) : (
-          <>
-            <Link style={padding} to='/create'>
-              new blog
-            </Link>
-            <button onClick={handleLogout}>logout</button>
-          </>
-        )}
+      <Box>
+        <Box>
+          <AppBar position='static'>
+            <Toolbar>
+              <Typography style={{ fontSize: '1.5em' }}>Blog app</Typography>
+              <section style={{ marginLeft: 'auto' }}>
+                <Button color='inherit' sx={style} component={Link} to='/'>
+                  blogs
+                </Button>
+                {!user ? (
+                  <Button
+                    color='inherit'
+                    sx={style}
+                    component={Link}
+                    to='/login'
+                  >
+                    login
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      color='inherit'
+                      sx={style}
+                      component={Link}
+                      to='/create'
+                    >
+                      new blog
+                    </Button>
+                    <Button color='inherit' sx={style} onClick={handleLogout}>
+                      logout
+                    </Button>
+                  </>
+                )}
+              </section>
+            </Toolbar>
+          </AppBar>
+          <Notification message={notifyMessage} />
+        </Box>
         <Routes>
           <Route
             path='/login'
@@ -183,7 +213,7 @@ const App = () => {
           />
           <Route path='/' element={<BlogList blogs={blogs} />} />
         </Routes>
-      </div>
+      </Box>
     </Container>
   )
 }
